@@ -5,8 +5,11 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
 import org.lwjgl.opengl.GL11;
+
+import com.google.common.base.Charsets;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundCategory;
@@ -157,7 +160,7 @@ public class SettingInterferenceTracker implements ProfileEventWatcher {
 		File f = this.getSettingCacheFile();
 		if (!f.exists())
 			return false;
-		ArrayList<String> li = ReikaFileReader.getFileAsLines(f, true);
+		List<String> li = ReikaFileReader.getFileAsLines(f, true, Charsets.UTF_8);
 		HashSet<SettingInterference> set = new HashSet();
 		HashSet<SettingInterference> set2 = new HashSet();
 		for (String s : li) {
@@ -188,7 +191,7 @@ public class SettingInterferenceTracker implements ProfileEventWatcher {
 				}
 			}
 
-			ReikaFileReader.writeLinesToFile(f, li, true);
+			ReikaFileReader.writeLinesToFile(f, li, true, Charsets.UTF_8);
 		}
 		catch (Exception e) {
 			e.printStackTrace();

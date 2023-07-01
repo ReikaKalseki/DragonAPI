@@ -9,11 +9,9 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.IO;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintWriter;
+import java.nio.file.StandardOpenOption;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -21,10 +19,11 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.apache.logging.log4j.Level;
 
+import com.google.common.base.Charsets;
+
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonOptions;
 import Reika.DragonAPI.Base.DragonAPIMod;
-import Reika.DragonAPI.IO.ReikaFileReader;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
@@ -39,9 +38,7 @@ public class ModLogger {
 	private static boolean logAll = false;
 	private static boolean logNone = false;
 
-	private BufferedWriter outputFile;
 	private LoggerOut IOThread;
-	private String destination;
 
 	private static final String NEWLINE = System.getProperty("line.separator");
 
@@ -80,51 +77,23 @@ public class ModLogger {
 	}
 
 	/** Preface with '*' to use the log folder as a parent and preface with an additional '*' to preface the mod name. */
-	public ModLogger setOutput(String name) {
-		File f = this.parseFileString(name);
+	public ModLogger setOutput(String file) {
+		File f = this.parseFileString(file);
 		if (f.exists())
 			f.delete();
-		try (BufferedWriter p = ReikaFileReader.getPrintWriterForNewFile(f)) {
-			this.flushOutput();
-			File par = new File(f.getParent());
-			if (!par.exists())
-				par.mkdirs();
-			destination = f.getCanonicalPath();
-			this.setOutput(p);
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-		}
+		File par = new File(f.getParent());
+		if (!par.exists())
+			par.mkdirs();
+		this.logChange(f);
+		IOThread = new LoggerOut(mod.getDisplayName()+" - Custom I/O Logger", f);
+		IOThread.start();
 		return this;
 	}
 
-	public ModLogger setOutput(OutputStream out) {
-		this.flushOutput();
-		destination = out.getClass().getSimpleName()+" OutputStream '"+out+"'";
-		this.setOutput(new BufferedWriter(new PrintWriter(out)));
-		return this;
-	}
-
-	private void setOutput(BufferedWriter buf) {
-		this.logChange();
-		outputFile = buf;
-		IOThread = new LoggerOut();
-		Thread th = new Thread(IOThread);
-		th.setDaemon(true);
-		th.setName(mod.getDisplayName()+" - Custom I/O Logger");
-		th.start();
-	}
-
-	private void logChange() {
+	private void logChange(File f) {
 		this.log("===============================================================================================================================");
-		this.log("Logging is being redirected to "+destination+". Check there for any and all logging information including debugging and errors!");
+		this.log("Logging is being redirected to "+f.getAbsolutePath()+". Check there for any and all logging information including debugging and errors!");
 		this.log("===============================================================================================================================");
-	}
-
-	private void flushOutput() {
-		if (outputFile != null) {
-			IOThread.terminated = true;
-		}
 	}
 
 	public void debug(Object o) {
@@ -144,7 +113,7 @@ public class ModLogger {
 	}
 
 	private void write(Level l, String s) {
-		if (outputFile != null) {
+		if (IOThread != null) {
 			IOThread.addMessage(s, l);
 		}
 		else
@@ -205,23 +174,25 @@ public class ModLogger {
 		}
 	}
 
-	private class LogLine {
+	private static class LogLine implements CharSequence {
 
 		private final String message;
 		private final Level level;
 		private final Thread sender;
 		private final long time;
+		private final String stringValue;
 
 		private LogLine(String s, Level l) {
 			message = s;
 			sender = Thread.currentThread();
 			level = l;
 			time = System.currentTimeMillis();
+			stringValue = this.parseTime()+" "+this.parseThread()+": "+message+NEWLINE;
 		}
 
 		@Override
 		public String toString() {
-			return this.parseTime()+" "+this.parseThread()+": "+message+NEWLINE;
+			return stringValue;
 		}
 
 		private String parseTime() {
@@ -246,55 +217,61 @@ public class ModLogger {
 			return (int)time;
 		}
 
-	}
-
-	private class LoggerOut implements Runnable {
-
-		private ConcurrentLinkedQueue<LogLine> messages = new ConcurrentLinkedQueue();
-		private boolean terminated = false;
-
-		private LoggerOut() {
-
+		@Override
+		public int length() {
+			return stringValue.length();
 		}
 
-		private void addMessage(String s, Level l) {
+		@Override
+		public char charAt(int index) {
+			return stringValue.charAt(index);
+		}
+
+		@Override
+		public CharSequence subSequence(int start, int end) {
+			return stringValue.subSequence(start, end);
+		}
+
+	}
+
+	public static class LoggerOut extends Thread {
+
+		private final File outputFile;
+		private ConcurrentLinkedQueue<LogLine> messages = new ConcurrentLinkedQueue();
+
+		public LoggerOut(String n, File f) {
+			outputFile = f;
+			this.setName(n);
+			this.setDaemon(true);
+		}
+
+		public void addMessage(String s, Level l) {
 			messages.add(new LogLine(s, l));
 		}
 
 		@Override
 		public void run() {
-			while (!terminated || !messages.isEmpty()) { //killed by MC if closes (deamon thread)
-				LogLine current = null;
+			while (!messages.isEmpty()) { //killed by MC if closes (deamon thread)
 				try {
-					while (!messages.isEmpty()) {
-						current = messages.remove();
-						outputFile.write(current.toString());
-					}
-					if (current != null)
-						outputFile.flush();
+					java.nio.file.Files.write(outputFile.toPath(), messages, Charsets.UTF_8, StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+					messages.clear();
 					Thread.sleep(50);
 				}
 				catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 				catch (IOException e) {
-					ReikaJavaLibrary.pConsole("ERROR: Could not output logger line to its IO destination '"+destination+"'!");
-					ReikaJavaLibrary.pConsole(current.level, current.message);
+					ReikaJavaLibrary.pConsole("ERROR: Could not output logger contents line to its IO destination '"+outputFile+"'!");
+					ReikaJavaLibrary.pConsole(messages);
+					messages.add(new LogLine("ERROR WRITING: "+e.toString(), Level.ERROR));
 					e.printStackTrace();
 				}
-			}
-			try {
-				outputFile.close();
-			}
-			catch (IOException e) {
-				e.printStackTrace();
-				ReikaJavaLibrary.pConsole("ERROR: Could not close logger stream!");
 			}
 		}
 
 		@Override
 		public String toString() {
-			return messages.size()+" Messages from "+mod.getDisplayName()+": {"+messages+"}";
+			return messages.size()+" Messages from "+this.getName()+": {"+messages+"}";
 		}
 
 	}

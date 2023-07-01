@@ -362,7 +362,7 @@ public abstract class LuaBlock {
 
 		private LuaBlock activeBlock = new BasicLuaBlock("top", null, this);
 
-		private final HashMap<String, LuaBlock> rawData = new HashMap();
+		private final LinkedHashMap<String, LuaBlock> rawData = new LinkedHashMap();
 
 		public boolean hasDuplicateKeys = false;
 		public Class<? extends LuaBlock> defaultBlockType;
@@ -375,7 +375,7 @@ public abstract class LuaBlock {
 			this.loadFromLines(ReikaFileReader.getFileAsLines(f, false, Charsets.UTF_8));
 		}
 
-		public final void loadFromLines(ArrayList<String> li) {
+		public final void loadFromLines(List<String> li) {
 			//ArrayList<ArrayList<String>> data = new ArrayList();
 			int bracketLevel = 0;
 			for (String s : li) {
@@ -473,6 +473,10 @@ public abstract class LuaBlock {
 			return activeBlock.getTopParent();
 		}
 
+		public Collection<LuaBlock> getTopBlocks() {
+			return Collections.unmodifiableCollection(rawData.values());
+		}
+
 		public LuaBlock createRootBlock() {
 			LuaBlock lb = new BasicLuaBlock("base", null, this);
 			this.addBlock("base", lb);
@@ -495,6 +499,10 @@ public abstract class LuaBlock {
 
 	public NBTTagCompound asNBT() {
 		return (NBTTagCompound)this.asNBT(false);
+	}
+
+	public boolean isEmpty() {
+		return data.isEmpty() && children.isEmpty();
 	}
 
 	private NBTBase asNBT(boolean allowList) {

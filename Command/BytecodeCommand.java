@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -28,6 +29,8 @@ import java.util.Stack;
 import java.util.UUID;
 
 import org.apache.commons.lang3.ArrayUtils;
+
+import com.google.common.base.Charsets;
 
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
@@ -397,7 +400,7 @@ public class BytecodeCommand extends ReflectiveBasedCommand {
 		f2.getParentFile().mkdirs();
 		f2.delete();
 		f2.createNewFile();
-		ReikaFileReader.writeLinesToFile(f2, this.getObjectData(o, 0, fullValues, new HashSet()), true);
+		ReikaFileReader.writeLinesToFile(f2, this.getObjectData(o, 0, fullValues, new HashSet()), true, Charsets.UTF_8);
 	}
 
 	private ArrayList<String> getObjectData(Object o, int depth, boolean fullValues, HashSet<Object> chain) {
@@ -847,7 +850,7 @@ public class BytecodeCommand extends ReflectiveBasedCommand {
 		}
 
 		private static BytecodeProgram readFile(File f) {
-			ArrayList<String> li = ReikaFileReader.getFileAsLines(f, true);
+			List<String> li = ReikaFileReader.getFileAsLines(f, true, Charsets.UTF_8);
 			String name = li.remove(0);
 			String uid = li.remove(0);
 			String admin = li.remove(0);
@@ -876,7 +879,7 @@ public class BytecodeCommand extends ReflectiveBasedCommand {
 			f.createNewFile();
 			ArrayList<String> li = this.serializeProgram();
 			this.prependHeader(li);
-			ReikaFileReader.writeLinesToFile(f, li, true);
+			ReikaFileReader.writeLinesToFile(f, li, true, Charsets.UTF_8);
 		}
 
 		private void prependHeader(ArrayList<String> li) {

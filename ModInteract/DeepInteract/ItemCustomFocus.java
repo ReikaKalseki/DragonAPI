@@ -62,6 +62,7 @@ public abstract class ItemCustomFocus extends ItemFocusBasic {
 	protected abstract String getID();
 
 	@Override
+	@ModDependent(ModList.THAUMCRAFT)
 	public abstract FocusUpgradeType[] getPossibleUpgradesByRank(ItemStack focusstack, int rank);
 
 	public boolean onLeftClick(World world, int x, int y, int z, EntityPlayer ep, ItemStack wand, ForgeDirection side) {

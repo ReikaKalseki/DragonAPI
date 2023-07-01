@@ -31,7 +31,7 @@ public class ReikaXMLBase {
 	private ReikaXMLBase() {throw new RuntimeException("The class "+this.getClass()+" cannot be instantiated!");}
 
 	public static Document getXMLDocument(InputStream in) throws SAXException, IOException {
-		ArrayList<String> li = ReikaFileReader.getFileAsLines(in, true, Charsets.UTF_8);
+		List<String> li = ReikaFileReader.getFileAsLines(in, true, Charsets.UTF_8);
 		while (!li.isEmpty() && !li.get(0).startsWith("<?xml version")) { //automatically clear any header crap
 			li.remove(0);
 		}

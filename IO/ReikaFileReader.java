@@ -20,7 +20,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -28,9 +27,8 @@ import java.io.LineNumberReader;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
+import java.io.Reader;
 import java.io.Serializable;
-import java.io.Writer;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
@@ -43,15 +41,15 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.jar.JarFile;
 
-import org.apache.commons.codec.Charsets;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
+import com.google.common.base.Charsets;
+import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.io.Files;
 import com.google.gson.JsonElement;
@@ -84,40 +82,6 @@ public class ReikaFileReader extends DragonAPICore {
 		return len;
 	}
 
-	/** Make sure you close this! */
-	public static BufferedReader getReader(File f, Charset set) {
-		try {
-			return new BufferedReader(new InputStreamReader(new FileInputStream(f), set));
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-
-	/** Make sure you close this! */
-	public static BufferedReader getReader(InputStream in, Charset set) {
-		try {
-			return new BufferedReader(new InputStreamReader(in, set));
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-
-	/** Make sure you close this! */
-	public static BufferedReader getReader(String path, Charset set) {
-		try {
-			return new BufferedReader(new InputStreamReader(new FileInputStream(path), set));
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-
-	/** Make sure you close this! */
 	public static BufferedReader getReader(URL url, int timeout, ConnectionErrorHandler ch, DataFetcher f) {
 		if (!isInternetAccessible(timeout)) {
 			if (ch != null)
@@ -218,157 +182,104 @@ public class ReikaFileReader extends DragonAPICore {
 	public static ArrayList<File> getAllFilesInFolder(File f) {
 		return getAllFilesInFolder(f, null);
 	}
-	/*
-	public static String readTextFile(Class root, String path) {
-		try(InputStream in = root.getResourceAsStream(path)) {
-			if (in == null) {
-				DragonAPICore.logError("File "+path+" does not exist!");
-				return "";
-			}
-			StringBuilder sb = new StringBuilder();
-			BufferedReader p;
-			try {
-				p = new BufferedReader(new InputStreamReader(in));
-			}
-			catch (NullPointerException e) {
-				return sb.toString();
-			}
-			int i = 0;
-			try {
-				String line = null;
-				while((line = p.readLine()) != null) {
-					if (!line.isEmpty()) {
-						sb.append(line);
-						i++;
-						sb.append("\n");
-					}
-				}
-				p.close();
-			}
-			catch (Exception e) {
-				DragonAPICore.logError(e.getMessage()+" on loading line "+i);
-			}
-			return sb.toString();
-		}
-	}
-	 */
-	public static ArrayList<String> getFileAsLines(String path, boolean printStackTrace, Charset set) {
-		return getFileAsLines(getReader(path, set), printStackTrace);
+
+	public static List<String> getFileAsLines(String path, boolean printStackTrace, Charset set) {
+		return getFileAsLines(new File(path), printStackTrace, set);
 	}
 
-	public static ArrayList<String> getFileAsLines(URL url, int timeout, boolean printStackTrace, ConnectionErrorHandler ch) {
+	public static List<String> getFileAsLines(URL url, int timeout, boolean printStackTrace, ConnectionErrorHandler ch) {
 		return getFileAsLines(url, timeout, printStackTrace, ch, null);
 	}
 
-	public static ArrayList<String> getFileAsLines(URL url, int timeout, boolean printStackTrace, ConnectionErrorHandler ch, DataFetcher f) {
+	public static List<String> getFileAsLines(URL url, int timeout, boolean printStackTrace, ConnectionErrorHandler ch, DataFetcher f) {
 		BufferedReader r = getReader(url, timeout, ch, f);
 		return r != null ? getFileAsLines(r, printStackTrace) : null;
 	}
 
-	@Deprecated
-	public static ArrayList<String> getFileAsLines(File f, boolean printStackTrace) {
-		return getFileAsLines(f, printStackTrace, Charset.defaultCharset());
-	}
-
-	public static ArrayList<String> getFileAsLines(File f, boolean printStackTrace, Charset set) {
-		return getFileAsLines(getReader(f, set), printStackTrace);
-	}
-
-	@Deprecated
-	public static ArrayList<String> getFileAsLines(InputStream in, boolean printStackTrace) {
-		return getFileAsLines(in, printStackTrace, Charset.defaultCharset());
-	}
-
-	public static ArrayList<String> getFileAsLines(InputStream in, boolean printStackTrace, Charset set) {
-		return getFileAsLines(getReader(in, set), printStackTrace);
-	}
-
-	public static ArrayList<String> getFileAsLines(BufferedReader r, boolean printStackTrace) {
-		ArrayList<String> li = new ArrayList();
-		if (r == null)
-			return li;
-		String line = "";
+	public static List<String> getFileAsLines(InputStream f, boolean printStackTrace, Charset set) {
 		try {
-			while (line != null) {
-				line = r.readLine();
-				if (line != null) {
-					li.add(line);
-				}
-			}
+			return IOUtils.readLines(f, set);
 		}
-		catch (Exception e) {
+		catch (IOException e) {
+			if (printStackTrace)
+				e.printStackTrace();
+			return new ArrayList();
+		}
+	}
+
+	@Deprecated //do not remove
+	public static List<String> getFileAsLines(InputStream f, boolean printStackTrace) {
+		return getFileAsLines(f, printStackTrace, Charsets.UTF_8);
+	}
+
+	@Deprecated //do not remove
+	public static List<String> getFileAsLines(File f, boolean printStackTrace) {
+		return getFileAsLines(f, printStackTrace, Charsets.UTF_8);
+	}
+
+	public static List<String> getFileAsLines(File f, boolean printStackTrace, Charset set) {
+		try {
+			return Files.readLines(f, set);
+		}
+		catch (IOException e) {
+			if (printStackTrace)
+				e.printStackTrace();
+			return new ArrayList();
+		}
+	}
+
+	public static List<String> getFileAsLines(Reader r, boolean printStackTrace) {
+		try {
+			return IOUtils.readLines(r);
+		}
+		catch (IOException e) {
+			if (printStackTrace)
+				e.printStackTrace();
+			return new ArrayList();
+		}
+	}
+	/*
+	public static ArrayList<Byte> getFileAsBytes(File in, boolean printStackTrace, Charset set) {
+		try {
+			ArrayList<Byte> ret = new ArrayList();
+			for (byte b : java.nio.file.Files.readAllBytes(in.toPath()))
+				ret.add(b);
+			return ret;
+		}
+		catch (IOException e) {
+			if (printStackTrace)
+				e.printStackTrace();
+			return new ArrayList();
+		}
+	}
+	 */
+	public static boolean writeLinesToFile(String s, List<String> li, boolean printStackTrace, Charset set) {
+		return writeLinesToFile(new File(s), li, printStackTrace, set);
+	}
+
+	public static boolean writeLinesToFile(File f, List<String> li, boolean printStackTrace, Charset set) {
+		try(FileOutputStream fs = new FileOutputStream(f)) {
+			IOUtils.writeLines(li, System.getProperty("line.separator"), fs, set);
+			return true;
+		}
+		catch (IOException e) {
+			if (printStackTrace)
+				e.printStackTrace();
+			return false;
+		}
+	}
+	/*
+	public static void writeLinesToFile(OutputStream os, ArrayList<String> li, boolean printStackTrace, Charset set) {
+		try {
+			IOUtils.writeLines(li, System.getProperty("line.separator"), os, set);
+		}
+		catch (IOException e) {
 			if (printStackTrace)
 				e.printStackTrace();
 		}
-		finally {
-			try {
-				r.close();
-			}
-			catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		return li;
-	}
+	}*/
 
-	public static ArrayList<Byte> getFileAsBytes(InputStream in, boolean printStackTrace, Charset set) {
-		ArrayList<Byte> li = new ArrayList();
-		try(BufferedReader r = getReader(in, set)) {
-			byte b = (byte)r.read();
-			while (b != -1) {
-				li.add(b);
-				b = (byte)r.read();
-			}
-		}
-		catch (Exception e) {
-			if (printStackTrace)
-				e.printStackTrace();
-		}
-		return li;
-	}
-
-	public static BufferedWriter getWriter(File f) {
-		try {
-			return new BufferedWriter(new OutputStreamWriter(new FileOutputStream(f)));
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-
-	public static void writeLinesToFile(String s, ArrayList<String> li, boolean printStackTrace) {
-		writeLinesToFile(new File(s), li, printStackTrace);
-	}
-
-	public static void writeLinesToFile(File f, ArrayList<String> li, boolean printStackTrace) {
-		try(BufferedWriter p = new BufferedWriter(new PrintWriter(f))) {
-			writeLinesToFile(p, li, printStackTrace);
-		}
-		catch (IOException e) {
-			if (printStackTrace) {
-				e.printStackTrace();
-			}
-		}
-	}
-
-	public static void writeLinesToFile(BufferedWriter p, ArrayList<String> li, boolean printStackTrace) {
-		String sep = System.getProperty("line.separator");
-		try {
-			for (String s : li) {
-				p.write(s+sep);
-			}
-			p.flush();
-			p.close();
-		}
-		catch (IOException e) {
-			if (printStackTrace) {
-				e.printStackTrace();
-			}
-		}
-	}
-
-	public static void writeDataToFile(File f, ArrayList<Byte> li, boolean printStackTrace) {
+	public static void writeDataToFile(File f, List<Byte> li, boolean printStackTrace) {
 		try {
 			f.delete();
 			f.getParentFile().mkdirs();
@@ -393,7 +304,7 @@ public class ReikaFileReader extends DragonAPICore {
 		}
 	}
 
-	public static InputStream convertLinesToStream(ArrayList<String> li, boolean printStackTrace, Charset set) {
+	public static InputStream convertLinesToStream(List<String> li, boolean printStackTrace, Charset set) {
 		String sep = System.getProperty("line.separator");
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		try(BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(bos, set))) {
@@ -530,7 +441,7 @@ public class ReikaFileReader extends DragonAPICore {
 	/** Edits individual lines matching in a file if they match a given criterion. */
 	public static abstract class LineEditor {
 
-		private final HashMap<Integer, String> lines = new HashMap();
+		private List<String> lines;
 
 		/** Attempt line editing? */
 		public abstract boolean editLine(String s, int idx);
@@ -539,7 +450,26 @@ public class ReikaFileReader extends DragonAPICore {
 		protected abstract String getReplacementLine(String s, String newline, int idx);
 
 		public final boolean performChanges(File f, Charset set) {
-			lines.clear();
+			lines = getFileAsLines(f, true, set);
+			if (lines == null || lines.isEmpty())
+				return false;
+			boolean changed = false;
+			ArrayList<String> put = new ArrayList();
+			String sep = System.getProperty("line.separator");
+			for (int i = 0; i < lines.size(); i++) {
+				String s = lines.get(i);
+				String s2 = s;
+				if (this.editLine(s, i)) {
+					s2 = this.getReplacementLine(s, sep, i);
+					changed |= !s.equals(s2);
+				}
+				if (!Strings.isNullOrEmpty(s2))
+					put.add(s2);
+			}
+			if (changed)
+				return writeLinesToFile(f, put, true, set);
+			return true;
+			/*
 			File f2 = new File(f.getParentFile(), f.getName()+"_lineedit");
 			try(BufferedReader r = ReikaFileReader.getReader(f, set); FileOutputStream os = new FileOutputStream(f2)) {
 				String sep = System.getProperty("line.separator");
@@ -549,6 +479,7 @@ public class ReikaFileReader extends DragonAPICore {
 				while (line != null) {
 					lines.put(idx, line);
 					String rep = this.editLine(line, idx) ? this.getReplacementLine(line, sep, idx) : line;
+					changed |= !line.equals(rep);
 					if (rep == null) {
 
 					}
@@ -561,13 +492,19 @@ public class ReikaFileReader extends DragonAPICore {
 				if (out.toString().isEmpty() && !lines.isEmpty())
 					DragonAPICore.log("Warning: LineEditor "+this.getClass()+" emptied a file: "+f.getAbsolutePath());
 				os.write(out.toString().getBytes());
+			}
+			catch (IOException e) {
+				e.printStackTrace();
+				return false;
+			}
+			try {
 				Files.move(f2, f);
 				return true;
 			}
 			catch (IOException e) {
 				e.printStackTrace();
 				return false;
-			}
+			}*/
 		}
 
 		protected final String getOriginalLine(int i) {
@@ -713,7 +650,7 @@ public class ReikaFileReader extends DragonAPICore {
 		}
 	}
 
-	public static boolean isEmpty(File f) throws IOException {
+	public static boolean isEmpty(File f) throws IOException {/*
 		try (BufferedReader br = getReader(f, Charset.defaultCharset())) {
 			String line = br.readLine();
 			if (line == null || (line.length() == 0 && br.readLine() == null)) {
@@ -722,7 +659,9 @@ public class ReikaFileReader extends DragonAPICore {
 			else {
 				return false;
 			}
-		}
+		}*/
+		byte[] arr = java.nio.file.Files.readAllBytes(f.toPath());
+		return arr == null || arr.length == 0;
 	}
 
 	public static void emptyDirectory(File dir) {
@@ -808,11 +747,11 @@ public class ReikaFileReader extends DragonAPICore {
 		}
 	}
 
-	public static ArrayList<Byte> decryptFileBytes(InputStream in, Charset set) {
+	public static List<Byte> decryptFileBytes(InputStream in, Charset set) {
 		return decryptByteList(getFileAsLines(in, true, set));
 	}
 
-	public static ArrayList<Byte> decryptByteList(ArrayList<String> li2) {
+	public static List<Byte> decryptByteList(List<String> li2) {
 		ArrayList<Byte> li = new ArrayList();
 		for (String s : li2) {
 			List<String> arr = ReikaStringParser.splitStringByLength(s, 4);
@@ -840,7 +779,7 @@ public class ReikaFileReader extends DragonAPICore {
 	}
 
 	public static InputStream decryptInputStream(InputStream in, Charset set)  {
-		ArrayList<Byte> data = decryptFileBytes(in, set);
+		List<Byte> data = decryptFileBytes(in, set);
 		ByteArrayOutputStream bin = new ByteArrayOutputStream();
 		for (byte b : data)
 			bin.write(b);
@@ -848,7 +787,7 @@ public class ReikaFileReader extends DragonAPICore {
 	}
 
 	public static JsonElement readJSON(File f) {
-		try(BufferedReader r = getReader(f, Charsets.UTF_8)) {
+		try(BufferedReader r = new BufferedReader(new InputStreamReader(new FileInputStream(f), Charsets.UTF_8))) {
 			return new JsonParser().parse(r);
 		}
 		catch (IOException e) {
@@ -889,27 +828,5 @@ public class ReikaFileReader extends DragonAPICore {
 
 	public static boolean isFileWithin(File f, File dir) throws IOException {
 		return f.getCanonicalPath().startsWith(dir.getCanonicalPath());
-	}
-
-	public static SimpleLineWriter getPrintWriterForNewFile(File f) throws IOException {
-		f.createNewFile();
-		return new SimpleLineWriter(new FileWriter(f));
-	}
-
-	public static final class SimpleLineWriter extends BufferedWriter {
-
-		private SimpleLineWriter(Writer w) {
-			super(w);
-		}
-
-		public void println(String s) {
-			try {
-				this.write(s+System.getProperty("line.separator"));
-			}
-			catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-
 	}
 }

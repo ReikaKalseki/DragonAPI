@@ -23,6 +23,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 
+import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
 import com.mojang.authlib.GameProfile;
 
@@ -33,14 +34,12 @@ import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.common.config.Property.Type;
 
-import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Exception.InvalidConfigException;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Exception.RegistrationException;
 import Reika.DragonAPI.Exception.StupidIDException;
 import Reika.DragonAPI.IO.ReikaFileReader;
-import Reika.DragonAPI.IO.ReikaFileReader.SimpleLineWriter;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
 import Reika.DragonAPI.Instantiable.Data.Maps.ValueSortedMap;
 import Reika.DragonAPI.Interfaces.Configuration.BooleanConfig;
@@ -266,43 +265,6 @@ public class ControlledConfig {
 
 	public int getOtherID(int i) {
 		return otherIDs[i];
-	}
-
-	private boolean checkReset(Configuration config) {
-		//readID = config.get("Control", "Config ID - Edit to have your config auto-deleted", CURRENT_CONFIG_ID).getInt();
-		//return readID != CURRENT_CONFIG_ID;
-		return false;
-	}
-
-	protected final void resetConfigFile() {
-		String path = this.getConfigPath()+"_Old_Config_Backup.txt";
-		File backup = new File(path);
-		if (backup.exists())
-			backup.delete();
-		try (SimpleLineWriter p = ReikaFileReader.getPrintWriterForNewFile(backup)) {
-			DragonAPICore.log(configMod.getDisplayName().toUpperCase()+": Writing Backup File to "+path);
-			DragonAPICore.log(configMod.getDisplayName().toUpperCase()+": Use this to restore custom IDs if necessary.");
-			if (!backup.exists())
-				DragonAPICore.logError(configMod.getDisplayName().toUpperCase()+": Could not create backup file at "+path+"!");
-			else {
-				p.println("#####----------THESE ARE ALL THE OLD CONFIG SETTINGS YOU WERE USING----------#####");
-				p.println("#####---IF THEY DIFFER FROM THE DEFAULTS, YOU MUST RE-EDIT THE CONFIG FILE---#####");
-			}
-		}
-		catch (IOException e) {
-			DragonAPICore.logError(configMod.getDisplayName().toUpperCase()+": Could not create backup file due to IOException!");
-			e.printStackTrace();
-		}
-		configFile.delete();
-	}
-
-	private void versionCheck(FMLPreInitializationEvent event) {
-		if (this.checkReset(config)) {
-			DragonAPICore.log(configMod.getDisplayName().toUpperCase()+": Config File Format Changed. Resetting...");
-			this.resetConfigFile();
-			this.initProps(event);
-			return;
-		}
 	}
 
 	public void loadCustomConfigFile(FMLPreInitializationEvent event, String file) {
@@ -567,7 +529,7 @@ public class ControlledConfig {
 						f.delete();
 					f.createNewFile();
 					if (f.exists()) {
-						ReikaFileReader.writeLinesToFile(f, li, true);
+						ReikaFileReader.writeLinesToFile(f, li, true, Charsets.UTF_8);
 					}
 				}
 			}
@@ -616,7 +578,7 @@ public class ControlledConfig {
 	}
 
 	private void readData(HashMap<String, String> map, File f) {
-		ArrayList<String> li = ReikaFileReader.getFileAsLines(f, true);
+		List<String> li = ReikaFileReader.getFileAsLines(f, true, Charsets.UTF_8);
 		for (String s : li) {
 			if (s.startsWith("[")) {
 				int min = s.indexOf('"');

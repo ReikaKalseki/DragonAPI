@@ -7,6 +7,9 @@ import java.lang.reflect.Modifier;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+
+import com.google.common.base.Charsets;
 
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonAPIInit;
@@ -22,14 +25,14 @@ public class ShaderLibrary {
 
 	public final String name;
 
-	private ArrayList<String> code = new ArrayList();
+	private List<String> code = new ArrayList();
 
 	static void loadLibraries() {
 		if (libraries.isEmpty()) {
 			try (InputStream in = DragonAPICore.class.getResourceAsStream("Resources/Shader/liblist.txt")) {
 				if (in == null)
 					ShaderRegistry.error(DragonAPIInit.instance, null, "Shader library manifest not found", null);
-				ArrayList<String> li = ReikaFileReader.getFileAsLines(in, true, Charset.defaultCharset());
+				List<String> li = ReikaFileReader.getFileAsLines(in, true, Charsets.UTF_8);
 				for (String s : li) {
 					ShaderLibrary lib = new ShaderLibrary(s);
 					libraries.put(s, lib);
@@ -49,7 +52,7 @@ public class ShaderLibrary {
 		name = s;
 	}
 
-	protected ArrayList<String> load() {
+	protected List<String> load() {
 		try (InputStream in = DragonAPICore.class.getResourceAsStream("Resources/Shader/lib_"+name+".txt")) {
 			return ReikaFileReader.getFileAsLines(in, true, Charset.defaultCharset());
 		}

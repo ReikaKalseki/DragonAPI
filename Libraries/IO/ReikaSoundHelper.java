@@ -207,11 +207,31 @@ public class ReikaSoundHelper {
 			throw new MisuseException("You cannot call this from the client!");
 		World[] worlds = DimensionManager.getWorlds();
 		for (World world : worlds) {
-			for (EntityPlayer ep : (List<EntityPlayer>)world.playerEntities) {
-				playSound(s, world, ep, vol, pitch);
-			}
+			broadcastSound(s, vol, pitch, world, 0, 0, 0);
 		}
 
+	}
+
+	public static void broadcastSound(SoundEnum s, float vol, float pitch, World world, double posX, double posY, double posZ) {
+		for (EntityPlayer ep : (List<EntityPlayer>)world.playerEntities) {
+			s.playSound(world, posX, posY, posZ, vol, pitch, false);//playSound(s, world, ep, vol, pitch);
+		}
+	}
+
+	public static void broadcastSound(String s, float vol, float pitch) {
+		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
+			throw new MisuseException("You cannot call this from the client!");
+		World[] worlds = DimensionManager.getWorlds();
+		for (World world : worlds) {
+			broadcastSound(s, vol, pitch, world, 0, 0, 0);
+		}
+
+	}
+
+	public static void broadcastSound(String s, float vol, float pitch, World world, double posX, double posY, double posZ) {
+		for (EntityPlayer ep : (List<EntityPlayer>)world.playerEntities) {
+			playSoundFromServer(world, posX, posY, posZ, s, vol, pitch, false);
+		}
 	}
 
 	public static void playSoundAtEntity(World world, Entity e, String snd) {

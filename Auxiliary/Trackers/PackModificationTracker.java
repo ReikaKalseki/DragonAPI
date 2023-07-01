@@ -9,9 +9,7 @@
  ******************************************************************************/
 package Reika.DragonAPI.Auxiliary.Trackers;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -24,7 +22,6 @@ import net.minecraft.util.EnumChatFormatting;
 
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.IO.ReikaFileReader;
-import Reika.DragonAPI.IO.ReikaFileReader.SimpleLineWriter;
 import Reika.DragonAPI.Instantiable.IO.ControlledConfig;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 
@@ -70,18 +67,14 @@ public class PackModificationTracker {
 			if (!f.exists())
 				this.createDataFile(f, mod);
 
-			try(BufferedReader p = ReikaFileReader.getReader(f, Charsets.UTF_8)) {
-				String line = "";
-				while (line != null) {
-					line = p.readLine();
-					if (line != null && !line.isEmpty() && !line.startsWith("//")) {
-						PackModification entry = this.parseString(line);
-						if (entry != null) {
-							this.addEntry(mod, entry);
-						}
-						else {
-							throw new IllegalArgumentException("Invalid modification entry formatting: '"+line+"'");
-						}
+			for (String line : ReikaFileReader.getFileAsLines(f, true, Charsets.UTF_8)) {
+				if (line != null && !line.isEmpty() && !line.startsWith("//")) {
+					PackModification entry = this.parseString(line);
+					if (entry != null) {
+						this.addEntry(mod, entry);
+					}
+					else {
+						throw new IllegalArgumentException("Invalid modification entry formatting: '"+line+"'");
 					}
 				}
 			}
@@ -109,38 +102,33 @@ public class PackModificationTracker {
 		return new File(cfg.getConfigFolder(), this.getBasicSaveFileName(mod));
 	}
 
-	private void createDataFile(File f, DragonAPIMod mod) throws Exception {
-		try (SimpleLineWriter p = ReikaFileReader.getPrintWriterForNewFile(f)) {
-			this.writeCommentLine(p, "-------------------------------");
-			this.writeCommentLine(p, " "+mod.getDisplayName()+" Pack Modification Log File ");
-			this.writeCommentLine(p, "-------------------------------");
-			this.writeCommentLine(p, "");
-			this.writeCommentLine(p, "Use this file to specify any changes you are making to "+mod.getDisplayName()+" for your modpack.");
-			this.writeCommentLine(p, "Specify one per line, and format them in one of the following ways:");
-			this.writeCommentLine(p, "Description OR Description:Reason");
-			this.writeCommentLine(p, "");
-			this.writeCommentLine(p, "Sample Lines:");
-			this.writeCommentLine(p, "\tChanged compressor recipe to use GT steel");
-			this.writeCommentLine(p, "\tReplaced gold ingot in ignition unit recipe with signalum:Small balance tweak");
-			this.writeCommentLine(p, "");
-			this.writeCommentLine(p, "Entries missing a description, or with more than one colon separator, are incorrect.");
-			this.writeCommentLine(p, "Incorrectly formatted lines will throw an exception.");
-			this.writeCommentLine(p, "Lines beginning with '//' are comments and will be ignored, as will empty lines.");
-			this.writeCommentLine(p, "");
-			this.writeCommentLine(p, "NOTE WELL: Any changes you make to the pack MUST be specified here to avoid confusing users.");
-			this.writeCommentLine(p, "\tAny changes not explained here will be assumed to be intentionally hidden, and");
-			this.writeCommentLine(p, "\tyou will lose permission to make the changes.");
-			this.writeCommentLine(p, "====================================================================================");
-			p.append("\n");
-		}
-		catch (IOException e) {
-			mod.getModLogger().logError("Could not generate pack modification data file!");
-			e.printStackTrace();
-		}
+	private boolean createDataFile(File f, DragonAPIMod mod) throws Exception {
+		ArrayList<String> p = new ArrayList();
+		this.writeCommentLine(p, "-------------------------------");
+		this.writeCommentLine(p, " "+mod.getDisplayName()+" Pack Modification Log File ");
+		this.writeCommentLine(p, "-------------------------------");
+		this.writeCommentLine(p, "");
+		this.writeCommentLine(p, "Use this file to specify any changes you are making to "+mod.getDisplayName()+" for your modpack.");
+		this.writeCommentLine(p, "Specify one per line, and format them in one of the following ways:");
+		this.writeCommentLine(p, "Description OR Description:Reason");
+		this.writeCommentLine(p, "");
+		this.writeCommentLine(p, "Sample Lines:");
+		this.writeCommentLine(p, "\tChanged compressor recipe to use GT steel");
+		this.writeCommentLine(p, "\tReplaced gold ingot in ignition unit recipe with signalum:Small balance tweak");
+		this.writeCommentLine(p, "");
+		this.writeCommentLine(p, "Entries missing a description, or with more than one colon separator, are incorrect.");
+		this.writeCommentLine(p, "Incorrectly formatted lines will throw an exception.");
+		this.writeCommentLine(p, "Lines beginning with '//' are comments and will be ignored, as will empty lines.");
+		this.writeCommentLine(p, "");
+		this.writeCommentLine(p, "NOTE WELL: Any changes you make to the pack MUST be specified here to avoid confusing users.");
+		this.writeCommentLine(p, "\tAny changes not explained here will be assumed to be intentionally hidden, and");
+		this.writeCommentLine(p, "\tyou will lose permission to make the changes.");
+		this.writeCommentLine(p, "====================================================================================");
+		return ReikaFileReader.writeLinesToFile(f, p, true, Charsets.UTF_8);
 	}
 
-	private static void writeCommentLine(SimpleLineWriter p, String line) {
-		p.println("// "+line+"\n");
+	private static void writeCommentLine(ArrayList<String> li, String line) {
+		li.add("// "+line);
 	}
 
 	private PackModification parseString(String s) throws Exception {

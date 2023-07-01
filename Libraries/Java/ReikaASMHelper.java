@@ -9,7 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.Java;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -55,6 +54,8 @@ import org.objectweb.asm.tree.TypeInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
 import org.objectweb.asm.util.Textifier;
 import org.objectweb.asm.util.TraceMethodVisitor;
+
+import com.google.common.base.Charsets;
 
 import net.minecraft.launchwrapper.Launch;
 import net.minecraftforge.classloading.FMLForgePlugin;
@@ -1056,7 +1057,7 @@ public class ReikaASMHelper {
 		cn.accept(writer);
 		byte[] newdata = writer.toByteArray();
 		File f = new File(folder, cn.name+".class");
-		try (BufferedWriter p = ReikaFileReader.getPrintWriterForNewFile(f); FileOutputStream out = new FileOutputStream(f)) {
+		try (FileOutputStream out = new FileOutputStream(f)) {
 			folder.mkdirs();
 			out.write(newdata);
 		}
@@ -1288,7 +1289,7 @@ public class ReikaASMHelper {
 
 		File f = new File(path, cname+".class");
 		f.getParentFile().mkdirs();
-		try (BufferedWriter p = ReikaFileReader.getPrintWriterForNewFile(f); FileOutputStream out = new FileOutputStream(f)) {
+		try (FileOutputStream out = new FileOutputStream(f)) {
 			out.write(data);
 		}
 		catch (Throwable t) {
@@ -1353,7 +1354,7 @@ public class ReikaASMHelper {
 			DragonAPICore.log("SRGs do not exist. Cannot apply deobf.");
 			return;
 		}
-		ArrayList<String> li = ReikaFileReader.getFileAsLines(f, true);
+		List<String> li = ReikaFileReader.getFileAsLines(f, true, Charsets.UTF_8);
 		for (String s : li) {
 			if (!s.startsWith("CL")) {
 				String[] parts = s.split(" ");

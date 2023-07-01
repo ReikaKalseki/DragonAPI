@@ -16,7 +16,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+
+import com.google.common.base.Charsets;
 
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
@@ -142,7 +145,7 @@ public class RetroGenController {
 		//generatedChunks.remove(e.id); DO NOT CLEAR
 		File f = this.getFile(world, e);
 		if (f != null && f.exists()) {
-			ArrayList<String> li = ReikaFileReader.getFileAsLines(f, true);
+			List<String> li = ReikaFileReader.getFileAsLines(f, true, Charsets.UTF_8);
 			for (String s : li) {
 				ChunkCoordIntPair p = this.parseCoordPair(s);
 				cache.generatedChunks.addValue(e.id, p);
@@ -169,7 +172,7 @@ public class RetroGenController {
 		for (ChunkCoordIntPair p : cache.generatedChunks.get(e.id)) {
 			li.add(this.toString(p));
 		}
-		ReikaFileReader.writeLinesToFile(f, li, true);
+		ReikaFileReader.writeLinesToFile(f, li, true, Charsets.UTF_8);
 	}
 
 	private DataCache getOrCreateCache(World world) {

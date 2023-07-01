@@ -6,8 +6,11 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
+
+import com.google.common.base.Charsets;
 
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
@@ -64,7 +67,7 @@ public class DynamicRetrogenSettings {
 	}
 
 	private void readConfig(File f) {
-		ArrayList<String> li = ReikaFileReader.getFileAsLines(f, true);
+		List<String> li = ReikaFileReader.getFileAsLines(f, true, Charsets.UTF_8);
 		for (String s : li) {
 			if (s.charAt(0) == '#' || s.startsWith("--") || s.startsWith("//"))
 				continue;
@@ -100,7 +103,7 @@ public class DynamicRetrogenSettings {
 			li.add(g.identifier+"="+g.weight);
 		}
 		Collections.sort(li);
-		ReikaFileReader.writeLinesToFile(f, li, true);
+		ReikaFileReader.writeLinesToFile(f, li, true, Charsets.UTF_8);
 	}
 
 	private Generator createGenerator(String s, Integer wt) {

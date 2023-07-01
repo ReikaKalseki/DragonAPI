@@ -12,10 +12,10 @@ package Reika.DragonAPI.Auxiliary.Trackers;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -23,6 +23,8 @@ import javax.imageio.ImageIO;
 
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
+
+import com.google.common.base.Charsets;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
@@ -98,7 +100,7 @@ public final class PlayerSpecificRenderer {
 	public void loadGlowFiles() {
 		File f = new File(DragonAPICore.getMinecraftDirectory(), "config/Reika/glowrenders.dat");
 		if (f.exists()) {
-			ArrayList<String> li = ReikaFileReader.getFileAsLines(f, true);
+			List<String> li = ReikaFileReader.getFileAsLines(f, true, Charsets.UTF_8);
 			for (String s : li) {
 				try {
 					String[] parts = s.split("=");

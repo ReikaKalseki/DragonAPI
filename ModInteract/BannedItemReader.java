@@ -9,7 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Map.Entry;
@@ -99,44 +98,39 @@ public final class BannedItemReader {
 			this.parseJSONFile(f);
 		}
 		else {
-			try (BufferedReader in = ReikaFileReader.getReader(f, Charsets.UTF_8)) {
-				String line = in.readLine();
-				while (line != null) {
-					String oline = line;
-					boolean flag = false;
+			for (String line : ReikaFileReader.getFileAsLines(f, true, Charsets.UTF_8)) {
+				String oline = line;
+				boolean flag = false;
 
-					while(!line.isEmpty() && !Character.isDigit(line.charAt(0))) {
-						line = line.substring(1);
-					}
+				while(!line.isEmpty() && !Character.isDigit(line.charAt(0))) {
+					line = line.substring(1);
+				}
 
-					if (!line.isEmpty()) {
-						String[] parts = line.split(":");
-						if (parts != null && parts.length > 1) {
+				if (!line.isEmpty()) {
+					String[] parts = line.split(":");
+					if (parts != null && parts.length > 1) {
+						try {
+							String id = parts[0];
+							String meta = parts[1];
 							try {
-								String id = parts[0];
-								String meta = parts[1];
-								try {
-									int intid = Integer.parseInt(id);
-									int intmeta = meta.equals("*") ? -1 : Integer.parseInt(meta);
-									Item item = Item.getItemById(intid);
-									allEntries.add(intmeta >= 0 ? this.createKey(new ItemStack(item, intmeta)) : this.createKey(new ItemStack(item)));
-									flag = true;
-								}
-								catch (NumberFormatException e) {
-
-								}
+								int intid = Integer.parseInt(id);
+								int intmeta = meta.equals("*") ? -1 : Integer.parseInt(meta);
+								Item item = Item.getItemById(intid);
+								allEntries.add(intmeta >= 0 ? this.createKey(new ItemStack(item, intmeta)) : this.createKey(new ItemStack(item)));
+								flag = true;
 							}
-							catch (Exception e) {
-								//e.printStackTrace();
+							catch (NumberFormatException e) {
+
 							}
 						}
+						catch (Exception e) {
+							//e.printStackTrace();
+						}
 					}
+				}
 
-					if (!flag && !oline.isEmpty()) {
-						allEntries.add(this.createKey(ReikaItemHelper.lookupItem(oline)));
-					}
-
-					line = in.readLine();
+				if (!flag && !oline.isEmpty()) {
+					allEntries.add(this.createKey(ReikaItemHelper.lookupItem(oline)));
 				}
 			}
 		}

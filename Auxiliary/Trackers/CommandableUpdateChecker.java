@@ -24,8 +24,11 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
+
+import com.google.common.base.Charsets;
 
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
@@ -191,7 +194,7 @@ public final class CommandableUpdateChecker {
 		File f = this.getFile();
 		if (f.exists()) {
 			boolean deleteFile = false;
-			ArrayList<String> li = ReikaFileReader.getFileAsLines(f, true);
+			List<String> li = ReikaFileReader.getFileAsLines(f, true, Charsets.UTF_8);
 			for (int i = 0; i < li.size(); i++) {
 				String line = li.get(i);
 				String[] parts = line.split(":");
@@ -213,7 +216,7 @@ public final class CommandableUpdateChecker {
 		String name = ReikaStringParser.stripSpaces(mod.getDisplayName().toLowerCase(Locale.ENGLISH));
 		ModVersion latest = latestVersions.get(mod);
 		if (f.exists()) {
-			ArrayList<String> li = ReikaFileReader.getFileAsLines(f, true);
+			List<String> li = ReikaFileReader.getFileAsLines(f, true, Charsets.UTF_8);
 			Iterator<String> it = li.iterator();
 			while (it.hasNext()) {
 				String line = it.next();
@@ -305,7 +308,7 @@ public final class CommandableUpdateChecker {
 
 	private UpdateHash readHash(DragonAPIMod mod) {
 		File f = this.getHashFile();
-		ArrayList<String> data = ReikaFileReader.getFileAsLines(f, true);
+		List<String> data = ReikaFileReader.getFileAsLines(f, true, Charsets.UTF_8);
 		for (String s : data) {
 			String tag = mod.getDisplayName()+"=";
 			if (s.startsWith(tag)) {
@@ -317,7 +320,7 @@ public final class CommandableUpdateChecker {
 
 	private void writeHash(DragonAPIMod mod, UpdateHash uh) {
 		File f = this.getHashFile();
-		ArrayList<String> data = ReikaFileReader.getFileAsLines(f, true);
+		List<String> data = ReikaFileReader.getFileAsLines(f, true, Charsets.UTF_8);
 		String tag = mod.getDisplayName()+"=";
 		data.add(tag+uh.toString());
 		try(BufferedReader r = new BufferedReader(new FileReader(f)); FileOutputStream os = new FileOutputStream(f)) {
@@ -489,7 +492,7 @@ public final class CommandableUpdateChecker {
 
 		private ModVersion fetchLatestVersion() {
 			try {
-				ArrayList<String> lines = ReikaFileReader.getFileAsLines(checkURL, 10000, false, this, this);
+				List<String> lines = ReikaFileReader.getFileAsLines(checkURL, 10000, false, this, this);
 				if (lines == null || lines.isEmpty())
 					throw new VersionNotLoadableException("File was empty or null");
 				String name = ReikaStringParser.stripSpaces(mod.getDisplayName().toLowerCase(Locale.ENGLISH));

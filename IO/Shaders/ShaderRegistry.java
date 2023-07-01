@@ -3,7 +3,6 @@ package Reika.DragonAPI.IO.Shaders;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.IntBuffer;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -11,11 +10,14 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL40;
+
+import com.google.common.base.Charsets;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
@@ -214,7 +216,7 @@ public class ShaderRegistry {
 
 	private static String readData(DragonAPIMod mod, String id, ShaderTypes type, InputStream data, Collection<ShaderLibrary> libs) {
 		StringBuilder sb = new StringBuilder();
-		ArrayList<String> li = ReikaFileReader.getFileAsLines(data, true, Charset.defaultCharset());
+		List<String> li = ReikaFileReader.getFileAsLines(data, true, Charsets.UTF_8);
 		for (String s : li) {
 			if (s.startsWith("#import")) {
 				String[] parts = s.split(" ");

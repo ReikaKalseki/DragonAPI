@@ -5,8 +5,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
+import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
 
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -49,7 +51,7 @@ public class VersionTransitionTracker {
 
 		File f = this.getFilename(world);
 		if (f.exists()) {
-			ArrayList<String> li = ReikaFileReader.getFileAsLines(f, true);
+			List<String> li = ReikaFileReader.getFileAsLines(f, true, Charsets.UTF_8);
 			for (String s : li) {
 				String[] parts = s.split("=");
 				lastVersions.put(parts[0], parts[1]);
@@ -78,7 +80,7 @@ public class VersionTransitionTracker {
 				li.add(mc.getModId()+"="+this.parseModVersion(mc));
 			}
 
-			ReikaFileReader.writeLinesToFile(f, li, true);
+			ReikaFileReader.writeLinesToFile(f, li, true, Charsets.UTF_8);
 		}
 		catch (IOException e) {
 			e.printStackTrace();

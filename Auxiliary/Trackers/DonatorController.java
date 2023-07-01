@@ -11,11 +11,11 @@ package Reika.DragonAPI.Auxiliary.Trackers;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
@@ -49,12 +49,12 @@ public final class DonatorController {
 			DragonAPICore.logError("Could not create URL to donator file. Donators will not be loaded.");
 			return;
 		}
-		ArrayList<String> lines = ReikaFileReader.getFileAsLines(file, 10000, false, null);
+		List<String> lines = ReikaFileReader.getFileAsLines(file, 10000, false, null);
 		if (lines != null)
 			this.addDonators(mod, lines);
 	}
 
-	private void addDonators(DragonAPIMod mod, ArrayList<String> lines) {
+	private void addDonators(DragonAPIMod mod, List<String> lines) {
 		for (String s : lines) {
 			s = ReikaStringParser.stripSpaces(s);
 			String[] parts = s.split(":");

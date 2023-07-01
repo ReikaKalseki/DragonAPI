@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 import net.minecraft.util.EnumChatFormatting;
@@ -47,14 +48,14 @@ public final class PatreonController {
 			return;
 		}
 		DonatorFile f = new DonatorFile(dev);
-		ArrayList<String> lines = ReikaFileReader.getFileAsLines(file, 10000, false, f);
+		List<String> lines = ReikaFileReader.getFileAsLines(file, 10000, false, f);
 		if (lines != null) {
 			DragonAPICore.log("Loading "+lines.size()+" patrons for "+dev);
 			this.addPatrons(dev, lines);
 		}
 	}
 
-	private void addPatrons(String dev, ArrayList<String> lines) {
+	private void addPatrons(String dev, List<String> lines) {
 		for (String s : lines) {
 			s = ReikaStringParser.stripSpaces(s);
 			try {

@@ -15,6 +15,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 
+import com.google.common.base.Charsets;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.launchwrapper.LaunchClassLoader;
@@ -89,7 +91,7 @@ public class EnvironmentPackager {
 			sec.addAll(ReikaJavaLibrary.makeListFromArray(split));
 			data.add(sec);
 			sec = new DataSection(DataSections.OPTIONS);
-			sec.addAll(ReikaFileReader.getFileAsLines(this.getSettingsFile(), true));
+			sec.addAll(ReikaFileReader.getFileAsLines(this.getSettingsFile(), true, Charsets.UTF_8));
 			data.add(sec);
 			sec = new DataSection(DataSections.MODS);
 			for (ModContainer mc : Loader.instance().getActiveModList()) {
@@ -130,7 +132,7 @@ public class EnvironmentPackager {
 			li.add("Checksum:");
 			li.add(this.computeHash(li));
 
-			ReikaFileReader.writeLinesToFile(f, li, true);
+			ReikaFileReader.writeLinesToFile(f, li, true, Charsets.UTF_8);
 
 			return f;
 		}
