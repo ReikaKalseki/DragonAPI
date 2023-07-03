@@ -183,7 +183,7 @@ public final class RayTracer {
 		return true;
 	}
 
-	public boolean isDisallowedBlock(World world, int x, int y, int z) {
+	private boolean isDisallowedBlock(World world, int x, int y, int z) {
 		Block b = world.getBlock(x, y, z);
 		int meta = world.getBlockMetadata(x, y, z);
 		BlockKey key = new BlockKey(b, meta);

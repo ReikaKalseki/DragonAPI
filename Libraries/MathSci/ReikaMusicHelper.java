@@ -414,7 +414,8 @@ public class ReikaMusicHelper {
 		public static KeySignature findSignature(ArrayList<MusicKey> li) {
 			HashSet<Note> notes = new HashSet();
 			for (MusicKey key : li) {
-				notes.add(key.getNote());
+				if (key != null)
+					notes.add(key.getNote());
 			}
 			for (int i = 0; i < keys.length; i++) {
 				KeySignature ks = keys[i];

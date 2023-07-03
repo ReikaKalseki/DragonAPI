@@ -44,8 +44,6 @@ import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 
 public abstract class LuaBlock {
 
-	private static final Comparator<String> outputSorter = new OutputSorter();
-
 	private static final Pattern TYPE_SPECIFIER = Pattern.compile("\\[(.*?)\\]");
 
 	public static final String NULL_KEY_INHERIT = "[NULL KEY INHERIT]";
@@ -67,6 +65,9 @@ public abstract class LuaBlock {
 
 	private HashMap<String, String> comments = new HashMap();
 
+	private Comparator<String> outputSorter;
+	private Comparator<LuaBlockKey> outputKeySorter;
+
 	protected LuaBlock(String n, LuaBlock parent, LuaBlockDatabase db) {
 		isRoot = parent == null;
 		if (n.equals("{")) {
@@ -83,6 +84,18 @@ public abstract class LuaBlock {
 		}
 
 		requiredElements.add("type");
+
+		this.setOrdering(new OutputSorter());
+	}
+
+	public void setOrdering(Comparator<String> c) {
+		outputSorter = c;
+		outputKeySorter = c == null ? null : new Comparator<LuaBlockKey>() {
+			@Override
+			public int compare(LuaBlockKey o1, LuaBlockKey o2) {
+				return c.compare(o1.name, o2.name);
+			}
+		};
 	}
 
 	private LuaBlockKey createKey(String n) {
@@ -148,7 +161,26 @@ public abstract class LuaBlock {
 	}
 
 	private boolean isString(String s) {
-		return !Character.isDigit(s.charAt(s.charAt(0) == '-' && s.length() > 1 ? 1 : 0)) && !s.equalsIgnoreCase("true") && !s.equalsIgnoreCase("false");
+		if (s.equalsIgnoreCase("true") || s.equalsIgnoreCase("false"))
+			return false;
+		boolean isInt = false;
+		boolean isDouble = false;
+		try {
+			this.parseInt(s);
+			isInt = true;
+		}
+		catch (NumberFormatException e) {
+
+		}
+		try {
+			Double.parseDouble(s);
+			isDouble = true;
+		}
+		catch (NumberFormatException e) {
+
+		}
+		return !isInt && !isDouble;
+		//return !Character.isDigit(s.charAt(s.charAt(0) == '-' && s.length() > 1 ? 1 : 0)) && !s.equalsIgnoreCase("true") && !s.equalsIgnoreCase("false");
 	}
 
 	public final Collection<String> getKeys() {
@@ -659,7 +691,8 @@ public abstract class LuaBlock {
 			li.add(s);
 		}
 		ArrayList<String> keys = new ArrayList(data.keySet());
-		Collections.sort(keys, outputSorter);
+		if (outputSorter != null)
+			Collections.sort(keys, outputSorter);
 		for (String s : keys) {
 			String val = data.get(s);
 			if (this.isString(val))
@@ -677,7 +710,8 @@ public abstract class LuaBlock {
 			}
 		}
 		ArrayList<LuaBlockKey> keys2 = new ArrayList(children.keySet());
-		Collections.sort(keys2);
+		if (outputKeySorter != null)
+			Collections.sort(keys2, outputKeySorter);
 		for (LuaBlockKey s : keys2) {
 			LuaBlock c = children.get(s);
 			String put;
@@ -722,7 +756,7 @@ public abstract class LuaBlock {
 
 	}
 
-	private static class LuaBlockKey implements Comparable<LuaBlockKey> {
+	private static class LuaBlockKey {
 
 		public final String name;
 		public final String lookupKey;
@@ -749,11 +783,6 @@ public abstract class LuaBlock {
 		@Override
 		public int hashCode() {
 			return lookupKey.hashCode();
-		}
-
-		@Override
-		public int compareTo(LuaBlockKey o) {
-			return name.compareTo(o.name);
 		}
 
 	}

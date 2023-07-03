@@ -17,7 +17,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.Data.Maps.CountMap;
 import Reika.DragonAPI.Libraries.ReikaNBTHelper;
-import Reika.DragonAPI.Libraries.ReikaNBTHelper.EnumNBTConverter;
 import Reika.DragonAPI.Libraries.ReikaNBTHelper.NBTIO;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
@@ -47,7 +46,7 @@ public class StatisticalRandom<K> {
 			throw new MisuseException("You can only specify enum types via a class reference!");
 		K[] data = set.getEnumConstants();
 		options.addAll(ReikaJavaLibrary.makeListFromArray(data));
-		this.setNBTConverter((NBTIO<K>)new EnumNBTConverter((Class<? extends Enum>)set));
+		this.setNBTConverter((NBTIO<K>)ReikaNBTHelper.getEnumConverter((Class<? extends Enum>)set));
 	}
 
 	public void setNBTConverter(NBTIO<K> c) {

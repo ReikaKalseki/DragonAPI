@@ -809,6 +809,7 @@ public class DragonAPIInit extends DragonAPIMod {
 	@EventHandler
 	public void singlePlayerLogout(FMLServerStoppedEvent evt) {
 		ReikaPlayerAPI.clearHeadCache();
+		DragonAPIEventWatcher.instance.clearCaches();
 		if (evt.getSide() == Side.CLIENT) {
 			MinecraftForge.EVENT_BUS.post(new SinglePlayerLogoutEvent());
 		}

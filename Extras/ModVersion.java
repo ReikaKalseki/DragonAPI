@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -156,8 +156,7 @@ public class ModVersion implements Comparable<ModVersion> {
 			return getFromString(mj+mn);
 		}
 		catch (IOException e) {
-			e.printStackTrace();
-			throw new InstallationException(mod, "The version file was either damaged, overwritten, or is missing!");
+			throw new InstallationException(mod, "The version file was either damaged, overwritten, or is missing!", e);
 		}
 	}
 

@@ -10,7 +10,6 @@
 package Reika.DragonAPI.Libraries;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -102,7 +101,7 @@ public final class ReikaNBTHelper extends DragonAPICore {
 	}
 
 	public static Object getValue(NBTBase NBT, NBTIO converter) {
-		if (converter != null) {
+		if (converter != null && converter.acceptsTag(NBT)) {
 			return converter.createFromNBT(NBT);
 		}
 		else if (NBT instanceof NBTTagInt) {
@@ -141,7 +140,7 @@ public final class ReikaNBTHelper extends DragonAPICore {
 				NBTTagCompound tag = (NBTTagCompound)NBT;
 				for (Object o : tag.func_150296_c()) {
 					String s = (String)o;
-					map.put(s, getValue(tag.getTag(s)));
+					map.put(s, getValue(tag.getTag(s), converter));
 				}
 				return map;
 			}
@@ -149,7 +148,7 @@ public final class ReikaNBTHelper extends DragonAPICore {
 		else if (NBT instanceof NBTTagList) {
 			ArrayList li = new ArrayList();
 			for (Object o : ((NBTTagList)NBT).tagList) {
-				li.add(getValue((NBTBase)o));
+				li.add(getValue((NBTBase)o, converter));
 			}
 			return li;
 		}
@@ -163,7 +162,7 @@ public final class ReikaNBTHelper extends DragonAPICore {
 	}
 
 	public static NBTBase getTagForObject(Object o, NBTIO converter) {
-		if (converter != null) {
+		if (converter != null && converter.acceptsType(o)) {
 			return converter.convertToNBT(o);
 		}
 		else if (o instanceof Integer || o.getClass() == int.class) {
@@ -198,15 +197,15 @@ public final class ReikaNBTHelper extends DragonAPICore {
 			Map m = (Map)o;
 			for (Object k : m.keySet()) {
 				if (k instanceof String) {
-					tag.setTag((String)k, getTagForObject(m.get(k)));
+					tag.setTag((String)k, getTagForObject(m.get(k), converter));
 				}
 			}
 			return tag;
 		}
-		else if (o instanceof List) {
+		else if (o instanceof List || o instanceof Set) {
 			NBTTagList li = new NBTTagList();
-			for (Object o2 : ((List)o)) {
-				li.appendTag(getTagForObject(o2));
+			for (Object o2 : ((Collection)o)) {
+				li.appendTag(getTagForObject(o2, converter));
 			}
 			return li;
 		}
@@ -511,9 +510,11 @@ public final class ReikaNBTHelper extends DragonAPICore {
 
 		public V createFromNBT(NBTBase nbt);
 		public NBTBase convertToNBT(V obj);
+		public boolean acceptsType(Object o);
+		public boolean acceptsTag(NBTBase tag);
 
 	}
-
+	/*
 	public static class EnumNBTConverter implements NBTIO<Enum> {
 
 		private final List<Enum> enumData;
@@ -533,8 +534,13 @@ public final class ReikaNBTHelper extends DragonAPICore {
 			return new NBTTagInt(enumData.indexOf(obj));
 		}
 
-	}
+		@Override
+		public boolean acceptsType(Object o) {
+			return o instanceof Enum;
+		}
 
+	}
+	 */
 	public static class BlockConverter implements NBTIO<Block> {
 
 		public static final BlockConverter instance = new BlockConverter();
@@ -551,6 +557,16 @@ public final class ReikaNBTHelper extends DragonAPICore {
 		@Override
 		public NBTBase convertToNBT(Block obj) {
 			return new NBTTagString(Block.blockRegistry.getNameForObject(obj));
+		}
+
+		@Override
+		public boolean acceptsType(Object o) {
+			return o instanceof Block;
+		}
+
+		@Override
+		public boolean acceptsTag(NBTBase tag) {
+			return tag instanceof NBTTagString;
 		}
 
 	}
@@ -571,6 +587,16 @@ public final class ReikaNBTHelper extends DragonAPICore {
 		@Override
 		public NBTBase convertToNBT(Item obj) {
 			return new NBTTagString(Item.itemRegistry.getNameForObject(obj));
+		}
+
+		@Override
+		public boolean acceptsType(Object o) {
+			return o instanceof Item;
+		}
+
+		@Override
+		public boolean acceptsTag(NBTBase tag) {
+			return tag instanceof NBTTagString;
 		}
 
 	}
@@ -595,6 +621,16 @@ public final class ReikaNBTHelper extends DragonAPICore {
 			return ret;
 		}
 
+		@Override
+		public boolean acceptsType(Object o) {
+			return o instanceof ItemStack;
+		}
+
+		@Override
+		public boolean acceptsTag(NBTBase tag) {
+			return tag instanceof NBTTagCompound;
+		}
+
 	}
 
 	public static class KeyedItemStackConverter implements NBTIO<KeyedItemStack> {
@@ -617,6 +653,16 @@ public final class ReikaNBTHelper extends DragonAPICore {
 			return ret;
 		}
 
+		@Override
+		public boolean acceptsType(Object o) {
+			return o instanceof KeyedItemStack;
+		}
+
+		@Override
+		public boolean acceptsTag(NBTBase tag) {
+			return tag instanceof NBTTagCompound;
+		}
+
 	}
 
 	public static class UUIDConverter implements NBTIO<UUID> {
@@ -635,6 +681,16 @@ public final class ReikaNBTHelper extends DragonAPICore {
 		@Override
 		public NBTBase convertToNBT(UUID obj) {
 			return new NBTTagString(obj.toString());
+		}
+
+		@Override
+		public boolean acceptsType(Object o) {
+			return o instanceof UUID;
+		}
+
+		@Override
+		public boolean acceptsTag(NBTBase tag) {
+			return tag instanceof NBTTagString;
 		}
 
 	}
@@ -657,6 +713,16 @@ public final class ReikaNBTHelper extends DragonAPICore {
 		@Override
 		public NBTBase convertToNBT(Enum obj) {
 			return new NBTTagInt(obj.ordinal());
+		}
+
+		@Override
+		public boolean acceptsType(Object o) {
+			return o instanceof Enum;
+		}
+
+		@Override
+		public boolean acceptsTag(NBTBase tag) {
+			return tag instanceof NBTTagInt;
 		}
 
 	}

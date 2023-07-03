@@ -81,6 +81,16 @@ public final class Coordinate implements Location, Comparable<Coordinate> {
 			return obj.writeToTag();
 		}
 
+		@Override
+		public boolean acceptsType(Object o) {
+			return o instanceof Coordinate;
+		}
+
+		@Override
+		public boolean acceptsTag(NBTBase tag) {
+			return tag instanceof NBTTagCompound;
+		}
+
 	};
 
 	private static final Random rand = new Random();

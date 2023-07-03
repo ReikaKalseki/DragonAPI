@@ -395,6 +395,10 @@ public final class ReikaEntityHelper extends DragonAPICore {
 
 	/** Returns true if the mob is a hostile one. Args: EntityLivingBase mob */
 	public static boolean isHostile(EntityLivingBase mob) {
+		if (mob instanceof EntityIronGolem) {
+			EntityLivingBase tgt = ((EntityIronGolem)mob).getAttackTarget();
+			return tgt instanceof EntityPlayer || (tgt instanceof EntityTameable && ((EntityTameable)tgt).isTamed()) || tgt instanceof TameHostile;
+		}
 		return isHostile(mob.getClass());
 	}
 

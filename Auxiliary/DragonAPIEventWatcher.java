@@ -79,7 +79,6 @@ import Reika.DragonAPI.Extras.WorldAccessHooks;
 import Reika.DragonAPI.IO.DirectResourceManager;
 import Reika.DragonAPI.Instantiable.Interpolation;
 import Reika.DragonAPI.Instantiable.Event.AddRecipeEvent;
-import Reika.DragonAPI.Instantiable.Event.AddSmeltingEvent;
 import Reika.DragonAPI.Instantiable.Event.FireChanceEvent;
 import Reika.DragonAPI.Instantiable.Event.ItemUpdateEvent;
 import Reika.DragonAPI.Instantiable.Event.MobTargetingEvent;
@@ -188,13 +187,16 @@ public class DragonAPIEventWatcher implements ProfileEventWatcher, BlockRenderWa
 
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public void clearScheduledEvents(SinglePlayerLogoutEvent evt) {
-		TickScheduler.instance.clear();
-		if (ModList.MYSTCRAFT.isLoaded())
-			ReikaMystcraftHelper.clearCache();
+		this.clearCaches();
 	}
 
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public void clearScheduledEvents(ClientDisconnectionFromServerEvent evt) {
+		this.clearCaches();
+	}
+
+	public void clearCaches() {
+		ReikaWorldHelper.clearWorldKeyCache();
 		TickScheduler.instance.clear();
 		if (ModList.MYSTCRAFT.isLoaded())
 			ReikaMystcraftHelper.clearCache();
@@ -672,7 +674,7 @@ public class DragonAPIEventWatcher implements ProfileEventWatcher, BlockRenderWa
 			}
 		}
 	}
-
+	/*
 	@SubscribeEvent
 	public void verifySmeltingRecipe(AddSmeltingEvent evt) {
 		if (!evt.isVanillaPass) {
@@ -705,7 +707,7 @@ public class DragonAPIEventWatcher implements ProfileEventWatcher, BlockRenderWa
 				e.printStackTrace();
 			}
 		}
-	}
+	}*/
 	/*
 	@SubscribeEvent
 	public void addGuideGUI(PlayerInteractEvent evt) {

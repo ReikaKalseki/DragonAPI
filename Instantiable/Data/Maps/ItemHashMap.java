@@ -378,6 +378,16 @@ public final class ItemHashMap<V> {
 			return ret;
 		}
 
+		@Override
+		public boolean acceptsType(Object o) {
+			return o instanceof ItemKey;
+		}
+
+		@Override
+		public boolean acceptsTag(NBTBase tag) {
+			return tag instanceof NBTTagCompound;
+		}
+
 	}
 
 }

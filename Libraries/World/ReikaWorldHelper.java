@@ -149,6 +149,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 
 	private static final HashMap<Material, TemperatureEffect> temperatureBlockEffects = new HashMap();
 	private static final HashMap<String, WorldID> worldIDMap = new HashMap();
+	private static final HashMap<Integer, String> worldKeys = new HashMap();
 
 	private static final HashMap<Class, Boolean> fakeWorldTypes = new HashMap();
 
@@ -2570,8 +2571,17 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	}
 
 	private static String getWorldKey(World world) {
-		File f = world.getSaveHandler().getWorldDirectory();
-		return ReikaFileReader.getRealPath(f);//ReikaFileReader.getRelativePath(DragonAPICore.getMinecraftDirectory(), f);
+		String key = worldKeys.get(world.provider.dimensionId);
+		if (key == null) {
+			File f = world.getSaveHandler().getWorldDirectory();
+			key = ReikaFileReader.getRealPath(f);//ReikaFileReader.getRelativePath(DragonAPICore.getMinecraftDirectory(), f);
+			worldKeys.put(world.provider.dimensionId, key);
+		}
+		return key;
+	}
+
+	public static void clearWorldKeyCache() {
+		worldKeys.clear();
 	}
 
 	private static WorldID calculateWorldID(World world) {

@@ -12,6 +12,9 @@ package Reika.DragonAPI.Instantiable.Event;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
+
 import cpw.mods.fml.common.eventhandler.Cancelable;
 import cpw.mods.fml.common.eventhandler.Event;
 
@@ -35,8 +38,8 @@ public class AddSmeltingEvent extends Event {
 	public AddSmeltingEvent(ItemStack in, ItemStack out, float xp, boolean v) {
 		input = in;
 		output = out;
-		if (in == null || out == null || in.getItem() == null || out.getItem() == null)
-			throw new IllegalArgumentException("You cannot add null ("+toString(in)+">"+toString(out)+") to smelting recipes!");
+
+		this.validate();
 
 		originalXP = xp;
 		experienceValue = xp;
@@ -45,11 +48,11 @@ public class AddSmeltingEvent extends Event {
 	}
 
 	public ItemStack getInput() {
-		return input.copy();
+		return input == null ? null : input.copy();
 	}
 
 	public ItemStack getOutput() {
-		return output.copy();
+		return output == null ? null : output.copy();
 	}
 
 	public void markInvalid() {
@@ -73,10 +76,31 @@ public class AddSmeltingEvent extends Event {
 		return !isInvalid;
 	}
 
+	private void validate() {
+		if (input == null || input.getItem() == null) {
+			DragonAPICore.logError("Found a null-input (or null-item input) smelting recipe! "+null+" > "+output+"! This is invalid!");
+			Thread.dumpStack();
+			isInvalid = true;
+		}
+		else if (output == null || output.getItem() == null) {
+			DragonAPICore.logError("Found a null-output (or null-item output) smelting recipe! "+input+" > "+null+"! This is invalid!");
+			Thread.dumpStack();
+			isInvalid = true;
+		}
+		else if (!ReikaItemHelper.verifyItemStack(input, true)) {
+			DragonAPICore.logError("Found a smelting recipe with an invalid input!");
+			Thread.dumpStack();
+			isInvalid = true;
+		}
+		else if (!ReikaItemHelper.verifyItemStack(output, true)) {
+			DragonAPICore.logError("Found a smelting recipe with an invalid output!");
+			Thread.dumpStack();
+			isInvalid = true;
+		}
+	}
+
 	/** Returns true if recipe was added. */
 	public static boolean fire(ItemStack in, ItemStack out, float xp) {
-		if (in == null || out == null || in.getItem() == null || out.getItem() == null)
-			throw new IllegalArgumentException("You cannot add null ("+toString(in)+">"+toString(out)+") to smelting recipes!");
 		AddSmeltingEvent evt = new AddSmeltingEvent(in, out, xp);
 		return !MinecraftForge.EVENT_BUS.post(evt);
 	}

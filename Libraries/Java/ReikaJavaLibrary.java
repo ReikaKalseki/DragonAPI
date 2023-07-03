@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -33,6 +34,7 @@ import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.function.Predicate;
 
 import org.apache.commons.codec.Charsets;
 import org.apache.commons.io.IOUtils;
@@ -73,6 +75,15 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 			'\u039b', '\u03a0', '\u03a3', '\u03a6', '\u03a8', '\u03a9', '\u0414', '\u0416', '\u0418', '\u0428', '\u042c', '\u042d', '\u042e', '\u042f',
 			'\u05d0', '\u05d1', '\u05d2', '\u05d3', '\u05d4', '\u05d7', '\u05d8', '\u05da', '\u05db', '\u05dc', '\u05dd', '\u05de', '\u05e1', '\u05e2',
 			'\u05e3', '\u05e4', '\u05e6', '\u05e7', '\u05e8', '\u05e9', '\u05ea'
+	};
+
+	public static final Comparator<Comparable> reverseComparator = new Comparator<Comparable>() {
+
+		@Override
+		public int compare(Comparable o1, Comparable o2) {
+			return o2.compareTo(o1);
+		}
+
 	};
 
 	/** Generic write-to-console function. Args: Object */
@@ -849,15 +860,6 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 		return ret;
 	}
 
-	public static class ReverseComparator implements Comparator<Comparable> {
-
-		@Override
-		public int compare(Comparable o1, Comparable o2) {
-			return o2.compareTo(o1);
-		}
-
-	}
-
 	public static <E> Set<E> getSet(E... elements) {
 		return new HashSet(Arrays.asList(elements));
 	}
@@ -1095,5 +1097,14 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 				sb.append(", ");
 		}
 		return sb.toString();
+	}
+
+	public static <E extends Enum> EnumSet getConditionalEnumSet(Class<E> cl, Predicate<E> filter) {
+		EnumSet set = EnumSet.noneOf(cl);
+		for (E e : cl.getEnumConstants()) {
+			if (filter.test(e))
+				set.add(e);
+		}
+		return set;
 	}
 }
