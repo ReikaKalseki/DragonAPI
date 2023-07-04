@@ -29,6 +29,7 @@ import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Exception.RegistrationException;
 import Reika.DragonAPI.IO.DirectResourceManager;
 import Reika.DragonAPI.Instantiable.Event.Client.GameFinishedLoadingEvent;
+import Reika.DragonAPI.Instantiable.IO.ModLogger;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
 
@@ -202,15 +203,27 @@ public class DragonAPICore {
 	}
 
 	public static void debug(Object s) {
-		DragonAPIInit.instance.getModLogger().debug(s);
+		ModLogger log = DragonAPIInit.instance == null ? null : DragonAPIInit.instance.getModLogger();
+		if (log == null)
+			ReikaJavaLibrary.pConsole("DRAGONAPI DEBUG: "+s);
+		else
+			log.debug(s);
 	}
 
 	public static void log(Object s) {
-		DragonAPIInit.instance.getModLogger().log(s);
+		ModLogger log = DragonAPIInit.instance == null ? null : DragonAPIInit.instance.getModLogger();
+		if (log == null)
+			ReikaJavaLibrary.pConsole("DRAGONAPI: "+s);
+		else
+			log.log(s);
 	}
 
 	public static void logError(Object s) {
-		DragonAPIInit.instance.getModLogger().logError(s);
+		ModLogger log = DragonAPIInit.instance == null ? null : DragonAPIInit.instance.getModLogger();
+		if (log == null)
+			ReikaJavaLibrary.pConsole("DRAGONAPI ERROR: "+s);
+		else
+			log.logError(s);
 	}
 
 	public static void logError(Object o, Side side) {

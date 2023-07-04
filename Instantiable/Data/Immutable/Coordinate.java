@@ -413,7 +413,7 @@ public final class Coordinate implements Location, Comparable<Coordinate> {
 		vec = ReikaVectorHelper.rotateVector(vec, 0, left ? -90 : 90, 0);
 		vec.xCoord += ox;
 		vec.zCoord += oz;
-		return new Coordinate(vec.xCoord, yCoord, vec.zCoord);//new Coordinate(x2, yCoord, z2);
+		return new Coordinate(Math.round(vec.xCoord), yCoord, Math.round(vec.zCoord));//new Coordinate(x2, yCoord, z2);
 	}
 
 	public Coordinate rotate180About(int ox, int oz) {

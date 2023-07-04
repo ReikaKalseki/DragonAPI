@@ -518,10 +518,12 @@ public final class ReikaGuiAPI extends GuiScreen {
 	public void drawTooltipAt(FontRenderer f, String s, int mx, int my) {
 		if (s == null)
 			s = "[null]";
+		GL11.glPushMatrix();
 		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
 		GL11.glDisable(GL11.GL_BLEND);
+		//GL11.glDepthMask(false);
 		GL11.glDisable(GL11.GL_LIGHTING);
 		int k = f.getStringWidth(DelegateFontRenderer.stripFlags(s));
 		int j2 = mx + 12;
@@ -552,6 +554,7 @@ public final class ReikaGuiAPI extends GuiScreen {
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
 		f.drawStringWithShadow(s, j2, k2, 0xffffffff);
 		GL11.glPopAttrib();
+		GL11.glPopMatrix();
 
 		if (cacheRenders)
 			tooltips.addItem(s, mx, my+8, f.getStringWidth(s)+24, f.FONT_HEIGHT+8);

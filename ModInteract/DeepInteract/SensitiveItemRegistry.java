@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -28,6 +28,7 @@ import Reika.DragonAPI.ModInteract.ReikaEEHelper;
 
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import matteroverdrive.api.MOApi;
 import moze_intel.projecte.api.event.EMCRemapEvent;
 
 /** Register progression/balance-sensitive items here to blacklist normal recipe systems from adding new recipes for them. */
@@ -110,7 +111,7 @@ public final class SensitiveItemRegistry {
 					CraftingManagerBlacklisting.registerItem(item);
 					break;
 				case MATTEROVERDRIVE:
-					MatterOverdriveHandler.blacklist(item);
+					MOApi.instance().getMatterRegistry().addToBlacklist(item);
 					break;
 				case EE:
 					ReikaEEHelper.blacklistBlock(item);
@@ -127,7 +128,7 @@ public final class SensitiveItemRegistry {
 					CraftingManagerBlacklisting.registerItem(item);
 					break;
 				case MATTEROVERDRIVE:
-					MatterOverdriveHandler.blacklist(item);
+					MOApi.instance().getMatterRegistry().addToBlacklist(item);
 					break;
 				case EE:
 					ReikaEEHelper.blacklistItem(item);
@@ -144,7 +145,7 @@ public final class SensitiveItemRegistry {
 					CraftingManagerBlacklisting.registerItem(item);
 					break;
 				case MATTEROVERDRIVE:
-					MatterOverdriveHandler.blacklist(item);
+					MOApi.instance().getMatterRegistry().addToBlacklist(item);
 					break;
 				case EE:
 					ReikaEEHelper.blacklistItemStack(item);
