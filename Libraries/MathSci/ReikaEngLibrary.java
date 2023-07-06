@@ -161,6 +161,8 @@ public final class ReikaEngLibrary extends DragonAPICore {
 				return "P";
 			case 6:
 				return "E";
+			case 7:
+				return "Z";
 
 			case -1:
 				return "m";

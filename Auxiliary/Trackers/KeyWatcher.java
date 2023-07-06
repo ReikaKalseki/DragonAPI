@@ -57,10 +57,11 @@ public class KeyWatcher {
 	}
 
 	public void setKey(EntityPlayer ep, Key key, boolean press) {
+		//ReikaJavaLibrary.pConsole(key+">"+press);
 		keyStates.get(key).updateKey(ep, press);
 	}
 
-	public static enum Key {
+	public static enum Key { //THESE NEED TO MATCH THE KEYS ENUM
 		JUMP(),
 		SNEAK(),
 		FORWARD(),
@@ -106,7 +107,7 @@ public class KeyWatcher {
 	}
 
 	@SideOnly(Side.CLIENT)
-	private static enum Keys {
+	private static enum Keys { //THESE NEED TO MATCH THE KEY ENUM
 		JUMP(Minecraft.getMinecraft().gameSettings.keyBindJump),
 		SNEAK(Minecraft.getMinecraft().gameSettings.keyBindSneak),
 		FOWARD(Minecraft.getMinecraft().gameSettings.keyBindForward),
@@ -120,6 +121,7 @@ public class KeyWatcher {
 		CHAT(Minecraft.getMinecraft().gameSettings.keyBindChat),
 		LSHIFT(isCtrlSneak() ? getLCtrl() : Keyboard.KEY_LSHIFT),
 		LCTRL(isCtrlSneak() ? Keyboard.KEY_LSHIFT : getLCtrl()), //swap them
+		LALT(Keyboard.KEY_LMENU), //swap them
 		PGUP(Keyboard.KEY_PRIOR),
 		PGDN(Keyboard.KEY_NEXT),
 		TAB(Keyboard.KEY_TAB),

@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -229,6 +229,35 @@ public class BlockBounds {
 	@Override
 	public String toString() {
 		return negativeX+","+negativeY+","+negativeZ+" > "+positiveX+","+positiveY+","+positiveZ;
+	}
+
+	@Override
+	public int hashCode() {
+		return Double.hashCode(negativeX) ^ Double.hashCode(positiveX) + Double.hashCode(negativeY) ^ Double.hashCode(positiveY) + Double.hashCode(negativeZ) ^ Double.hashCode(positiveZ);
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (!(o instanceof BlockBounds))
+			return false;
+		BlockBounds bb = (BlockBounds)o;
+		return Math.abs(bb.negativeX-negativeX) < 0.01 && Math.abs(bb.negativeY-negativeY) < 0.01 && Math.abs(bb.negativeZ-negativeZ) < 0.01 && Math.abs(bb.positiveX-positiveX) < 0.01 && Math.abs(bb.positiveY-positiveY) < 0.01 && Math.abs(bb.positiveZ-positiveZ) < 0.01;
+	}
+
+	public boolean sharesSideSize(BlockBounds bb, ForgeDirection dir) {
+		switch(dir) {
+			case UP:
+			case DOWN:
+				return Math.abs(bb.negativeX-negativeX) < 0.01 && Math.abs(bb.negativeZ-negativeZ) < 0.01 && Math.abs(bb.positiveX-positiveX) < 0.01 && Math.abs(bb.positiveZ-positiveZ) < 0.01;
+			case EAST:
+			case WEST:
+				return Math.abs(bb.negativeY-negativeY) < 0.01 && Math.abs(bb.negativeZ-negativeZ) < 0.01 && Math.abs(bb.positiveY-positiveY) < 0.01 && Math.abs(bb.positiveZ-positiveZ) < 0.01;
+			case NORTH:
+			case SOUTH:
+				return Math.abs(bb.negativeX-negativeX) < 0.01 && Math.abs(bb.negativeY-negativeY) < 0.01 && Math.abs(bb.positiveX-positiveX) < 0.01 && Math.abs(bb.positiveY-positiveY) < 0.01;
+			default:
+				throw new IllegalStateException();
+		}
 	}
 
 }

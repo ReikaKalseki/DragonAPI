@@ -27,6 +27,7 @@ import net.minecraft.tileentity.TileEntityMobSpawner;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
 
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Instantiable.Data.Immutable.WorldLocation;
 import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
 
@@ -155,6 +156,10 @@ public class ReikaSpawnerHelper {
 		String name = getMobSpawnerMobName(spw);
 		for (int i = 0; i < num; i++) {
 			Entity e = EntityList.createEntityByName(name, world);
+			if (e == null) {
+				DragonAPICore.logError("Could not spawn spawner-based entity '"+name+"'");
+				continue;
+			}
 			double ex = ReikaRandomHelper.getRandomPlusMinus(spw.xCoord+0.5, 3.5D);
 			double ez = ReikaRandomHelper.getRandomPlusMinus(spw.zCoord+0.5, 3.5D);
 			double ey = ReikaRandomHelper.getRandomPlusMinus(spw.yCoord+0.5, 1.5D);

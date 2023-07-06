@@ -15,6 +15,7 @@ import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Predicate;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -70,8 +71,8 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 		private final int maxDepth;
 		private int depth = 0;
 		private boolean isDone = false;
-		private final HashSet<BlockKey> ids = new HashSet();
-		public final HashSet<BlockKey> passthrough = new HashSet();
+		public Predicate<BlockKey> blockValidity = b -> false;
+		public Predicate<BlockKey> passthrough = b -> false;
 		public boolean extraSpread = false;
 		public int tickRate = 1;
 		private int tick;
@@ -84,7 +85,6 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 		public BlockBox bounds = BlockBox.infinity();
 		public BreakerCallback call;
 		public boolean isOmni = false;
-		private boolean isBlacklist = false;
 		public boolean pathTracking = false;
 		public boolean dropFluids = true;
 		public boolean breakAir = false;
@@ -102,7 +102,7 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 			this.world = world;
 			start.addBlockCoordinate(x, y, z);
 			maxDepth = depth;
-			this.ids.addAll(ids);
+			this.setBlocks(false, ids);
 			originX = x;
 			originY = y;
 			originZ = z;
@@ -112,9 +112,7 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 			this.world = world;
 			start.addBlockCoordinate(x, y, z);
 			maxDepth = depth;
-			for (int i = 0; i < ids.length; i++) {
-				this.ids.add(ids[i]);
-			}
+			this.setBlocks(false, ids);
 			originX = x;
 			originY = y;
 			originZ = z;
@@ -124,8 +122,7 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 			this.world = world;
 			start.addBlockCoordinate(x, y, z);
 			maxDepth = depth;
-			for (int i = 0; i < 16; i++)
-				ids.add(new BlockKey(id, i));
+			this.setBlocks(false, new BlockKey(id));
 			originX = x;
 			originY = y;
 			originZ = z;
@@ -135,7 +132,7 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 			this.world = world;
 			start.addBlockCoordinate(x, y, z);
 			maxDepth = depth;
-			ids.add(new BlockKey(id, meta));
+			this.setBlocks(false, new BlockKey(id, meta));
 			originX = x;
 			originY = y;
 			originZ = z;
@@ -145,16 +142,19 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 			this(world, x, y, z, world.getBlock(x, y, z), world.getBlockMetadata(x, y, z), depth);
 		}
 
-		public void addBlock(BlockKey bk) {
-			ids.add(bk);
+		public void setBlocks(boolean blacklist, Collection<BlockKey> keys) {
+			this.setBlockSet(new HashSet(keys), blacklist);
 		}
 
-		public void setBlacklist(BlockKey... keys) {
-			ids.clear();
-			isBlacklist = true;
-			for (int i = 0; i < keys.length; i++) {
-				ids.add(keys[i]);
-			}
+		public void setBlocks(boolean blacklist, BlockKey... keys) {
+			HashSet<BlockKey> set = new HashSet();
+			for (BlockKey bk : keys)
+				set.add(bk);
+			this.setBlockSet(set, blacklist);
+		}
+
+		private void setBlockSet(HashSet<BlockKey> set, boolean blacklist) {
+			blockValidity = bk -> set.contains(bk) != blacklist;
 		}
 
 		public void exclude(int x, int y, int z) {
@@ -253,7 +253,7 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 				return false;
 			if (!isOmni) {
 				BlockKey bk = new BlockKey(id, meta);
-				if (!ids.contains(bk) && !passthrough.contains(bk))
+				if (!blockValidity.test(bk) && !passthrough.test(bk))
 					return false;
 			}
 			return player == null || (!world.isRemote && ReikaPlayerAPI.playerCanBreakAt((WorldServer)world, x, y, z, (EntityPlayerMP)player));
@@ -262,7 +262,7 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 		private void dropBlock(World world, int x, int y, int z) {
 			Block id = world.getBlock(x, y, z);
 			int meta = world.getBlockMetadata(x, y, z);
-			boolean pass = !doBreak || passthrough.contains(new BlockKey(id, meta));
+			boolean pass = !doBreak || passthrough.test(new BlockKey(id, meta));
 			if (!pass && id != Blocks.air) {
 				if (drops) {
 					ArrayList<ItemStack> drops = new ArrayList();

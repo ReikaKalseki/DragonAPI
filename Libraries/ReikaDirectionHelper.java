@@ -28,6 +28,7 @@ import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 import Reika.DragonAPI.Instantiable.Data.Maps.PluralMap;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaPhysicsHelper;
 
@@ -434,10 +435,21 @@ public class ReikaDirectionHelper extends DragonAPICore {
 		int magz = Math.abs(dz);
 		if (vertical && magy > magz && magy > magz)
 			return dy > 0 ? ForgeDirection.UP : ForgeDirection.DOWN;
-		else if (magx > magz)
-			return dx > 0 ? ForgeDirection.EAST : ForgeDirection.WEST;
-		else
-			return dz > 0 ? ForgeDirection.SOUTH : ForgeDirection.NORTH;
+			else if (magx > magz)
+				return dx > 0 ? ForgeDirection.EAST : ForgeDirection.WEST;
+				else
+					return dz > 0 ? ForgeDirection.SOUTH : ForgeDirection.NORTH;
+	}
+
+	public static String getDirectionInfoAsString() {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < 6; i++) {
+			sb.append(String.valueOf(i));
+			sb.append(": ");
+			sb.append(ReikaStringParser.capFirstChar(ForgeDirection.VALID_DIRECTIONS[i].name()));
+			sb.append("\n");
+		}
+		return sb.toString();
 	}
 
 }

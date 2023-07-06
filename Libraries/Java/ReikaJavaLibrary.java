@@ -25,6 +25,7 @@ import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -1106,5 +1107,17 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 				set.add(e);
 		}
 		return set;
+	}
+
+	public static <E> void removeDuplicates(Collection<E> li) {
+		HashSet<E> encountered = new HashSet();
+		Iterator<E> it = li.iterator();
+		while (it.hasNext()) {
+			E e = it.next();
+			if (encountered.contains(e))
+				it.remove();
+			else
+				encountered.add(e);
+		}
 	}
 }
