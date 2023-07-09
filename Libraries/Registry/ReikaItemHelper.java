@@ -916,8 +916,14 @@ public final class ReikaItemHelper extends DragonAPICore {
 	private static class ItemComparator implements Comparator<ItemStack> {
 
 		@Override
-		public int compare(ItemStack o1, ItemStack o2) {
-			if (o1.getItem() == o2.getItem()) {
+		public int compare(ItemStack o1, ItemStack o2) {/*
+			if (o1 == o2)
+				return 0;
+			else if (o1 == null)
+				return -1;
+			else if (o2 == null)
+				return 1;
+			else */if (o1.getItem() == o2.getItem()) {
 				if (o1.getItemDamage() == o2.getItemDamage()) {
 					if (o1.stackSize == o2.stackSize) {
 						if (o1.stackTagCompound == o2.stackTagCompound || (o1.stackTagCompound != null && o1.stackTagCompound.equals(o2.stackTagCompound))) {

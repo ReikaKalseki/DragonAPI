@@ -495,6 +495,7 @@ public abstract class LuaBlock {
 
 		public void clear() {
 			rawData.clear();
+			activeBlock = new BasicLuaBlock("top", null, this);
 		}
 
 		public LuaBlock getBlock(String key) {

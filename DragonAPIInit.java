@@ -266,7 +266,7 @@ public class DragonAPIInit extends DragonAPIMod {
 
 		this.initalizeVanillaOreDict();
 
-		ReikaJavaLibrary.initClass(ModList.class);
+		ReikaJavaLibrary.initClass(ModList.class, true);
 
 		this.increasePotionCount();
 		this.increaseChunkCap();
@@ -563,11 +563,11 @@ public class DragonAPIInit extends DragonAPIMod {
 
 		//CreativeTabSorter.instance.sortTabs(); //frequently messes up
 
-		ReikaJavaLibrary.initClass(FrameBlacklist.class);
-		ReikaJavaLibrary.initClass(ReikaMystcraftHelper.class);
-		ReikaJavaLibrary.initClass(ReikaThaumHelper.class);
-		ReikaJavaLibrary.initClass(SmelteryRecipeHandler.class);
-		ReikaJavaLibrary.initClass(TwilightForestLootHooks.class);
+		ReikaJavaLibrary.initClass(FrameBlacklist.class, true);
+		ReikaJavaLibrary.initClass(ReikaMystcraftHelper.class, true);
+		ReikaJavaLibrary.initClass(ReikaThaumHelper.class, true);
+		ReikaJavaLibrary.initClass(SmelteryRecipeHandler.class, true);
+		ReikaJavaLibrary.initClass(TwilightForestLootHooks.class, true);
 
 		if (ModList.APPENG.isLoaded()) {
 			MESystemReader.registerEffectHandler();
@@ -788,11 +788,11 @@ public class DragonAPIInit extends DragonAPIMod {
 		if (!this.registerHandler(ModList.HEXCRAFT, HexBlockHandler.class, "Block Handler", new ClassVersionHandler("com.celestek.hexcraft.api.WorldGenColors")))
 			this.registerHandler(ModList.HEXCRAFT, HexBlockHandlerSimple.class, "Block Handler");
 
-		ReikaJavaLibrary.initClass(ModOreList.class);
-		ReikaJavaLibrary.initClass(ModWoodList.class);
-		ReikaJavaLibrary.initClass(ModCropList.class);
-		ReikaJavaLibrary.initClass(PowerTypes.class);
-		ReikaJavaLibrary.initClass(InterfaceCache.class);
+		ReikaJavaLibrary.initClass(ModOreList.class, true);
+		ReikaJavaLibrary.initClass(ModWoodList.class, true);
+		ReikaJavaLibrary.initClass(ModCropList.class, true);
+		ReikaJavaLibrary.initClass(PowerTypes.class, true);
+		ReikaJavaLibrary.initClass(InterfaceCache.class, true);
 	}
 
 	@EventHandler
@@ -851,7 +851,7 @@ public class DragonAPIInit extends DragonAPIMod {
 	}
 
 	private void initHandler(ModList mod, Class<? extends ModHandlerBase> c, String id) throws Exception {
-		ReikaJavaLibrary.initClass(c);
+		ReikaJavaLibrary.initClass(c, true);
 		Method inst = c.getMethod("getInstance");
 		ModHandlerBase h = (ModHandlerBase)inst.invoke(null);
 		mod.registerHandler(h, id);

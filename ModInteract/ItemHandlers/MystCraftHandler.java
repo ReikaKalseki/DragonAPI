@@ -72,7 +72,7 @@ public class MystCraftHandler extends ModHandlerBase {
 			idnotebook = (Item)Item.itemRegistry.getObject(ModList.MYSTCRAFT.modLabel+":"+MystObjects.Items.booster);
 			idbook = (Item)Item.itemRegistry.getObject(ModList.MYSTCRAFT.modLabel+":"+MystObjects.Items.linkbook);
 
-			ReikaJavaLibrary.initClass(ReikaMystcraftHelper.class);
+			ReikaJavaLibrary.initClass(ReikaMystcraftHelper.class, true);
 		}
 		else {
 			this.noMod();

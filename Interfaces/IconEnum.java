@@ -1,11 +1,9 @@
 package Reika.DragonAPI.Interfaces;
 
-import net.minecraft.util.IIcon;
+import Reika.DragonAPI.Instantiable.GUI.GuiItemDisplay.IconProvider;
 
-public interface IconEnum {
+public interface IconEnum extends IconProvider {
 
 	public String name();
-
-	public IIcon getIcon();
 
 }

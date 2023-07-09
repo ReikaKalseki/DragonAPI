@@ -302,7 +302,7 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 	}
 
 	/** Initializes a class. */
-	public static void initClass(Class c) {
+	public static void initClass(Class c, boolean errorIfFail) {
 		if (printClasses)
 			printClassMetadata(c);
 		if (c == null) {
@@ -311,9 +311,12 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 			return;
 		}
 		try {
-			Class.forName(c.getName(), true, ReikaJavaLibrary.class.getClassLoader());
+			pConsole("DRAGONAPI: Initializing class "+c.getName()+" on classloader "+Thread.currentThread().getContextClassLoader());
+			Class.forName(c.getName());
 		}
 		catch (ClassNotFoundException e) {
+			if (errorIfFail)
+				throw new RuntimeException(e);
 			pConsole("DRAGONAPI: Failed to initalize class "+c.getName()+"! Class not found!");
 			e.printStackTrace();
 			printClassMetadata(c);
@@ -559,10 +562,10 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 		}
 	}
 
-	public static void initClassWithSubs(Class c) {
-		initClass(c);
+	public static void initClassWithSubs(Class c, boolean errorIfFail) {
+		initClass(c, errorIfFail);
 		for (Class c2 : c.getDeclaredClasses()) {
-			initClass(c2);
+			initClass(c2, errorIfFail);
 		}
 	}
 

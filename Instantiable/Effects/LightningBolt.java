@@ -62,7 +62,7 @@ public class LightningBolt {
 		}
 	}
 
-	public void maximize() {
+	public LightningBolt maximize() {
 		for (int i = 1; i < nsteps; i++) {
 			double tx = ReikaRandomHelper.getRandomPlusMinus(0, varianceX, rand);
 			double ty = ReikaRandomHelper.getRandomPlusMinus(0, varianceY, rand);
@@ -71,6 +71,7 @@ public class LightningBolt {
 			offsets[i][1] = ty;
 			offsets[i][2] = tz;
 		}
+		return this;
 	}
 
 	public void update() {

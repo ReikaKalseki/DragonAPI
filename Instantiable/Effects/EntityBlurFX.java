@@ -42,7 +42,7 @@ public class EntityBlurFX extends EntityFX implements CustomRenderFX {
 
 	private boolean noSlow = false;
 	private boolean rapidExpand = false;
-	private boolean alphaFade = false;
+	private float alphaFade = 0;
 
 	private AxisAlignedBB bounds = null;
 	private int bounceAction = 0;
@@ -126,7 +126,11 @@ public class EntityBlurFX extends EntityFX implements CustomRenderFX {
 	}
 
 	public final EntityBlurFX setAlphaFading() {
-		alphaFade = true;
+		return this.setAlphaFading(1);
+	}
+
+	public final EntityBlurFX setAlphaFading(float f) {
+		alphaFade = f;
 		return this;
 	}
 
@@ -273,7 +277,7 @@ public class EntityBlurFX extends EntityFX implements CustomRenderFX {
 	}
 
 	protected final boolean isAlphaFade() {
-		return alphaFade;
+		return alphaFade > 0;
 	}
 
 	public final int getMaxAge() {
@@ -362,7 +366,7 @@ public class EntityBlurFX extends EntityFX implements CustomRenderFX {
 			this.setColor(c);
 		}
 
-		if (alphaFade) {
+		if (alphaFade > 0) {
 			particleScale = scale;
 			float f = 1;
 			if (rapidExpand) {
@@ -377,7 +381,7 @@ public class EntityBlurFX extends EntityFX implements CustomRenderFX {
 				particleBlue = defaultBlue*f;
 			}
 			else {
-				particleAlpha = f;
+				particleAlpha = f*alphaFade;
 			}
 		}
 		else {
@@ -450,7 +454,7 @@ public class EntityBlurFX extends EntityFX implements CustomRenderFX {
 		if (colorController != null) {
 			int rgb = colorController.getColor(this);
 			float f = 1;
-			if (alphaFade) {
+			if (alphaFade > 0) {
 				if (rapidExpand) {
 					f = (particleMaxAge/age >= 12 ? age*12F/particleMaxAge : 1-age/(float)particleMaxAge);
 				}

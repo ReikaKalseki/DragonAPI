@@ -94,7 +94,7 @@ public class DragonAPIClassTransformer implements IClassTransformer {
 			if (c != null) {
 
 				if (!init) {
-					ReikaJavaLibrary.initClass(CoreModDetection.class);
+					ReikaJavaLibrary.initClass(CoreModDetection.class, true);
 					init = true;
 				}
 
