@@ -8,10 +8,20 @@ import net.minecraft.world.biome.BiomeDecorator;
 import net.minecraft.world.biome.BiomeGenBase;
 
 import Reika.DragonAPI.Instantiable.IO.ModLogger;
+import Reika.DragonAPI.Libraries.Java.ReikaJVMParser;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public abstract class StackableBiomeDecorator extends BiomeDecorator {
 
 	private static LinkedList<DecoState> stateStack = new LinkedList();
+
+	public static int STATE_STACK_LIMIT;
+
+	static {
+		int limit = ReikaJVMParser.getArgumentInteger("-DragonAPI_DecoratorStackLimit", 250);
+		STATE_STACK_LIMIT = limit > 0 ? limit : 250;
+		ReikaJavaLibrary.pConsole("Biome state stack limit: "+STATE_STACK_LIMIT);
+	}
 
 	@Override
 	public final void decorateChunk(World world, Random rand, BiomeGenBase biome, int x, int z) {
@@ -19,7 +29,7 @@ public abstract class StackableBiomeDecorator extends BiomeDecorator {
 			//this.getLogger().logError("Already decorating in biome "+this.toString()+"! Generation will attempt to continue, but worldgen errors may occur.");// State stack: "+stateStack.size()+":"+stateStack);
 		}
 
-		if (stateStack.size() >= 250) { //generally only happens on large biome worlds
+		if (stateStack.size() >= STATE_STACK_LIMIT) { //generally only happens on large biome worlds
 			this.getLogger().logError("STATE STACK IS TOO LARGE ["+stateStack.size()+"] TO SAFELY CONTINUE, ABORTING "+this+" DECORATION IN CHUNK "+x+", "+z);
 			return;
 		}

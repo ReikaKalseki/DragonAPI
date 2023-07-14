@@ -148,6 +148,12 @@ public class ImagedGuiButton extends GuiButton {
 		return this;
 	}
 
+	public ImagedGuiButton setTooltip(String s) {
+		displayString = s;
+		hasToolTip = true;
+		return this;
+	}
+
 	protected final String getButtonTexture() {
 		return filepath;
 	}

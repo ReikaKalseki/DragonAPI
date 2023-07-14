@@ -29,7 +29,7 @@ import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 import Reika.DragonAPI.Instantiable.IO.NBTFile;
 import Reika.DragonAPI.Instantiable.Worldgen.ChunkSplicedGenerationCache;
-import Reika.DragonAPI.Instantiable.Worldgen.ChunkSplicedGenerationCache.TileCallback;
+import Reika.DragonAPI.Instantiable.Worldgen.ChunkSplicedGenerator.TileCallback;
 import Reika.DragonAPI.Libraries.ReikaNBTHelper;
 import Reika.DragonAPI.Libraries.ReikaNBTHelper.NBTTypes;
 
@@ -289,6 +289,16 @@ public class StructureExport extends NBTFile {
 				ReikaNBTHelper.overwriteNBT(tag, tileData);
 				te.readFromNBT(tag);
 			}
+		}
+
+		@Override
+		public void writeToNBT(NBTTagCompound tag) {
+			tag.setTag("data", tileData.copy());
+		}
+
+		public void readFromNBT(NBTTagCompound tag) {
+			ReikaNBTHelper.clearTagCompound(tileData);
+			ReikaNBTHelper.overwriteNBT(tileData, tag);
 		}
 
 	}

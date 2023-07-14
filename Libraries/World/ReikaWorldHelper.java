@@ -1874,7 +1874,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		return false;
 	}
 
-	public static int countAdjacentBlocks(World world, int x, int y, int z, Block id, boolean checkCorners) {
+	public static int countAdjacentBlocks(IBlockAccess world, int x, int y, int z, Block id, boolean checkCorners) {
 		int count = 0;
 		for (int i = 0; i < 6; i++) {
 			ForgeDirection dir = ForgeDirection.VALID_DIRECTIONS[i];
@@ -2005,7 +2005,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		return loader instanceof AnvilChunkLoader && ((AnvilChunkLoader)loader).chunkExists(world, x, z);
 	}
 
-	public static int getWaterDepth(World world, int x, int y, int z) {
+	public static int getWaterDepth(IBlockAccess world, int x, int y, int z) {
 		Block b = world.getBlock(x, y, z);
 		int c = 0;
 		while (b == Blocks.water) {

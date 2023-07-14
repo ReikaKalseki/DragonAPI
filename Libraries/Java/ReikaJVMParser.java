@@ -46,14 +46,20 @@ public class ReikaJVMParser {
 	}
 
 	public static int getArgumentInteger(String pre) {
+		return getArgumentInteger(pre, -1);
+	}
+
+	public static int getArgumentInteger(String pre, int fallback) {
 		for (String s : args) {
 			if (s.startsWith(pre)) {
 				int idx = s.indexOf('=');
-				String ret = s.substring(idx);
+				if (idx < 0)
+					return fallback;
+				String ret = s.substring(idx+1);
 				return ReikaJavaLibrary.safeIntParse(ret);
 			}
 		}
-		return -1;
+		return fallback;
 	}
 
 	public static long getAllocatedHeapMemory() {

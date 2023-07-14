@@ -35,6 +35,7 @@ import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 import org.apache.commons.codec.Charsets;
@@ -1122,5 +1123,9 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 			else
 				encountered.add(e);
 		}
+	}
+
+	public static <K> Function<K, Double> createConstFunction(double val) {
+		return (key) -> val;
 	}
 }

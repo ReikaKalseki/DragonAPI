@@ -31,8 +31,7 @@ public class CustomSoundGuiButton extends GuiButton {
 	}
 
 	@Override
-	public void drawButton(Minecraft mc, int x, int y)
-	{
+	public void drawButton(Minecraft mc, int x, int y) {
 		super.drawButton(mc, x, y);
 		if (visible) {
 			if (field_146123_n && !lastHover && ticks > 1) {
@@ -44,8 +43,7 @@ public class CustomSoundGuiButton extends GuiButton {
 	}
 
 	@Override
-	public void func_146113_a(SoundHandler sh)
-	{
+	public void func_146113_a(SoundHandler sh) {
 		gui.playButtonSound(this);
 	}
 

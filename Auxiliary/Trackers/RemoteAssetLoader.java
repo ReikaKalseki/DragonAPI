@@ -348,6 +348,11 @@ public class RemoteAssetLoader {
 		}
 
 		@Override
+		public final void onCertificateFailed() {
+			this.logError("HTTP Certificate Invalid!", true);
+		}
+
+		@Override
 		public final void onTimedOut() {
 			this.logError("Timed Out", false);
 		}

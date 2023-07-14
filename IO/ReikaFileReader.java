@@ -45,6 +45,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.jar.JarFile;
 
+import javax.net.ssl.SSLException;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
@@ -113,6 +115,10 @@ public class ReikaFileReader extends DragonAPICore {
 		catch (SocketTimeoutException e) { //Slow internet, cannot load a text file...
 			if (ch != null)
 				ch.onTimedOut();
+		}
+		catch (SSLException e) { //cert issues
+			if (ch != null)
+				ch.onCertificateFailed();
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -367,6 +373,7 @@ public class ReikaFileReader extends DragonAPICore {
 	public static interface ConnectionErrorHandler {
 
 		void onServerRedirected();
+		void onCertificateFailed();
 		void onTimedOut();
 		void onNoInternet();
 		void onServerNotFound();

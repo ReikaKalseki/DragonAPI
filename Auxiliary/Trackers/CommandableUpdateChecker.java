@@ -26,9 +26,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map.Entry;
 import java.util.UUID;
 
 import com.google.common.base.Charsets;
+import com.google.common.base.Strings;
 
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
@@ -45,6 +47,7 @@ import Reika.DragonAPI.Auxiliary.PopupWriter;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Command.DragonCommandBase;
 import Reika.DragonAPI.Extras.ModVersion;
+import Reika.DragonAPI.Extras.ModVersion.ErroredVersion;
 import Reika.DragonAPI.IO.ReikaFileReader;
 import Reika.DragonAPI.IO.ReikaFileReader.ConnectionErrorHandler;
 import Reika.DragonAPI.IO.ReikaFileReader.DataFetcher;
@@ -73,7 +76,7 @@ public final class CommandableUpdateChecker {
 	private final HashMap<DragonAPIMod, ModVersion> latestVersions = new OneWayMap();
 	private final Collection<UpdateChecker> checkers = new OneWayList();
 	private final Collection<DragonAPIMod> oldMods = new OneWayList();
-	private final Collection<DragonAPIMod> noURLMods = new OneWayList();
+	private final HashMap<DragonAPIMod, String> noURLMods = new OneWayMap();
 
 	private final HashMap<String, DragonAPIMod> modNames = new OneWayMap();
 	private final HashMap<DragonAPIMod, String> modNamesReverse = new OneWayMap();
@@ -81,7 +84,7 @@ public final class CommandableUpdateChecker {
 	private final HashMap<DragonAPIMod, Boolean> overrides = new OneWayMap();
 
 	private final Collection<DragonAPIMod> dispatchedOldMods = new ArrayList();
-	private final Collection<DragonAPIMod> dispatchedURLMods = new ArrayList();
+	private final HashMap<DragonAPIMod, String> erroredMods = new HashMap();
 
 	private final HashMap<DragonAPIMod, UpdateHash> hashes = new HashMap();
 
@@ -109,11 +112,12 @@ public final class CommandableUpdateChecker {
 					ModVersion version = c.version;
 					ModVersion latest = latestVersions.get(mod);
 					//if (version.isCompiled()) {
-					if (latest == ModVersion.timeout) {
+					if (latest instanceof ErroredVersion) {
 						this.markUpdate(mod, version, latest);
 						ReikaJavaLibrary.pConsole("-----------------------"+mod.getTechnicalName()+"-----------------------");
 						ReikaJavaLibrary.pConsole("Could not connect to version server. Please check your internet settings,");
 						ReikaJavaLibrary.pConsole("and if the server is unavailable please contact "+mod.getModAuthorName()+".");
+						ReikaJavaLibrary.pConsole(((ErroredVersion)latest).errorMessage);
 						ReikaJavaLibrary.pConsole("------------------------------------------------------------------------");
 					}
 					else if (version.compareTo(latest) < 0) {
@@ -138,8 +142,12 @@ public final class CommandableUpdateChecker {
 	}
 
 	private void markUpdate(DragonAPIMod mod, ModVersion version, ModVersion latest) {
-		if (latest == ModVersion.timeout) {
-			noURLMods.add(mod);
+		if (latest instanceof ErroredVersion) {
+			String s = ((ErroredVersion)latest).errorMessage;
+			int idx = s.indexOf(':');
+			if (idx > 0)
+				s = s.substring(idx+1).trim();
+			noURLMods.put(mod, s);
 		}
 		else {
 			oldMods.add(mod);
@@ -201,7 +209,7 @@ public final class CommandableUpdateChecker {
 				DragonAPIMod mod = modNames.get(parts[0]);
 				boolean b = Boolean.parseBoolean(parts[1]);
 				ModVersion version = ModVersion.getFromString(parts[2]);
-				if (version == ModVersion.timeout)
+				if (version instanceof ErroredVersion)
 					deleteFile = true;
 				else if (version.equals(latestVersions.get(mod)))
 					overrides.put(mod, b);
@@ -270,8 +278,8 @@ public final class CommandableUpdateChecker {
 					ReikaPacketHelper.sendStringPacket(DragonAPIInit.packetChannel, PacketIDs.OLDMODS.ordinal(), modNamesReverse.get(mod), pt);
 				}
 			}
-			for (DragonAPIMod mod : noURLMods) {
-				ReikaPacketHelper.sendStringPacket(DragonAPIInit.packetChannel, PacketIDs.OLDMODS.ordinal(), "URL_"+modNamesReverse.get(mod), pt);
+			for (Entry<DragonAPIMod, String> e : noURLMods.entrySet()) {
+				ReikaPacketHelper.sendStringPacket(DragonAPIInit.packetChannel, PacketIDs.OLDMODS.ordinal(), "URL_"+modNamesReverse.get(e.getKey())+"::"+e.getValue(), pt);
 			}
 		}
 	}
@@ -370,12 +378,17 @@ public final class CommandableUpdateChecker {
 
 	@SideOnly(Side.CLIENT)
 	public void onClientReceiveOldModID(String s) {
-		Collection<DragonAPIMod> c = s.startsWith("URL_") ? dispatchedURLMods : dispatchedOldMods;
-		if (s.startsWith("URL_"))
+		if (s.startsWith("URL_")) {
 			s = s.substring(4);
-		DragonAPIMod mod = modNames.get(s);
-		if (!c.contains(mod))
-			c.add(mod);
+			String[] parts = s.split("::");
+			DragonAPIMod mod = modNames.get(parts[0]);
+			erroredMods.put(mod, parts[1]);
+		}
+		else {
+			DragonAPIMod mod = modNames.get(s);
+			if (!dispatchedOldMods.contains(mod))
+				dispatchedOldMods.add(mod);
+		}
 	}
 
 	@SubscribeEvent
@@ -393,10 +406,14 @@ public final class CommandableUpdateChecker {
 				sb.append(" as soon as possible.");
 				li.add(sb.toString());
 			}
-			for (DragonAPIMod mod : dispatchedURLMods) {
+			for (Entry<DragonAPIMod, String> e : erroredMods.entrySet()) {
 				StringBuilder sb = new StringBuilder();
+				DragonAPIMod mod = e.getKey();
 				sb.append(mod.getDisplayName());
-				sb.append(" could not verify its version; the version server may be inaccessible. Check your internet settings, and please notify ");
+				String err = e.getValue();
+				if (Strings.isNullOrEmpty(err))
+					err = "The version server may be inaccessible";
+				sb.append(" could not verify its version; "+err+". Check your internet settings, and please notify ");
 				sb.append(mod.getModAuthorName());
 				sb.append(" if the server is not accessible.");
 				li.add(sb.toString());
@@ -505,7 +522,8 @@ public final class CommandableUpdateChecker {
 				}
 			}
 			catch (VersionNotLoadableException e) {
-				return ModVersion.timeout;
+				this.logError(e);
+				return new ErroredVersion(e);
 			}
 			catch (Exception e) {
 				this.logError(e);
@@ -538,6 +556,11 @@ public final class CommandableUpdateChecker {
 		@Override
 		public void onServerNotFound() {
 			throw new VersionNotLoadableException("Version server not found!");
+		}
+
+		@Override
+		public void onCertificateFailed() {
+			throw new VersionNotLoadableException("Version server could not be contacted: HTTPS certificate issues");
 		}
 
 		@Override

@@ -7,7 +7,6 @@ import java.util.Collections;
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
@@ -29,8 +28,8 @@ public interface GuiItemDisplay extends Comparable<GuiItemDisplay> {
 
 	public static class GuiStackDisplay implements GuiItemDisplay {
 
-		@SideOnly(Side.CLIENT)
-		private static final RenderItem renderer = new RenderItem();
+		//@SideOnly(Side.CLIENT)
+		//private static final RenderItem renderer = new RenderItem();
 
 		protected ItemStack item;
 
@@ -58,7 +57,7 @@ public interface GuiItemDisplay extends Comparable<GuiItemDisplay> {
 		@SideOnly(Side.CLIENT)
 		public void draw(FontRenderer fr, int x, int y) {
 			if (item != null)
-				ReikaGuiAPI.instance.drawItemStackWithTooltip(renderer, fr, item, x, y);
+				ReikaGuiAPI.instance.drawItemStackWithTooltip(ReikaGuiAPI.itemRenderer, fr, item, x, y);
 		}
 
 		public boolean isEmpty() {
@@ -68,6 +67,10 @@ public interface GuiItemDisplay extends Comparable<GuiItemDisplay> {
 		@Override
 		public int compareTo(GuiItemDisplay o) {
 			return o instanceof GuiStackDisplay ? ReikaItemHelper.comparator.compare(item, ((GuiStackDisplay)o).item) : 1;
+		}
+
+		public ItemStack getItem() {
+			return this.isEmpty() ? null : item.copy();
 		}
 
 	}
@@ -101,6 +104,11 @@ public interface GuiItemDisplay extends Comparable<GuiItemDisplay> {
 
 		public GuiStackListDisplay() {
 			super();
+		}
+
+		public GuiStackListDisplay(ItemStack... c) {
+			super();
+			this.addItems(c);
 		}
 
 		public GuiStackListDisplay(Collection<ItemStack> c) {

@@ -119,6 +119,11 @@ public final class PatreonController {
 			DragonAPICore.logError("Error accessing online file: Timed Out");
 		}
 
+		@Override
+		public void onCertificateFailed() {
+			DragonAPICore.logError("Error accessing online file: Your HTTP certificate is invalid!");
+		}
+
 	}
 
 	private void addPatron(String dev, String name, int amt) {

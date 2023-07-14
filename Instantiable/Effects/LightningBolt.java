@@ -11,6 +11,7 @@ package Reika.DragonAPI.Instantiable.Effects;
 
 import java.util.List;
 import java.util.Random;
+import java.util.function.Function;
 
 import Reika.DragonAPI.Instantiable.Data.Immutable.DecimalPosition;
 import Reika.DragonAPI.Instantiable.Math.Spline;
@@ -24,12 +25,12 @@ public class LightningBolt {
 
 	public final int nsteps;
 
-	private double varianceX = 1;
-	private double varianceY = 1;
-	private double varianceZ = 1;
-	private double velocityX = 1;
-	private double velocityY = 1;
-	private double velocityZ = 1;
+	private final double[] varianceX;
+	private final double[] varianceY;
+	private final double[] varianceZ;
+	private final double[] velocityX;
+	private final double[] velocityY;
+	private final double[] velocityZ;
 
 	public final DecimalPosition start;
 	public final DecimalPosition end;
@@ -50,6 +51,13 @@ public class LightningBolt {
 		start = p1;
 		end = p2;
 
+		varianceX = new double[nsteps+1];
+		varianceY = new double[nsteps+1];
+		varianceZ = new double[nsteps+1];
+		velocityX = new double[nsteps+1];
+		velocityY = new double[nsteps+1];
+		velocityZ = new double[nsteps+1];
+
 		offsets = new double[nsteps+1][3];
 		offsetTargets = new double[nsteps+1][3];
 
@@ -64,9 +72,9 @@ public class LightningBolt {
 
 	public LightningBolt maximize() {
 		for (int i = 1; i < nsteps; i++) {
-			double tx = ReikaRandomHelper.getRandomPlusMinus(0, varianceX, rand);
-			double ty = ReikaRandomHelper.getRandomPlusMinus(0, varianceY, rand);
-			double tz = ReikaRandomHelper.getRandomPlusMinus(0, varianceZ, rand);
+			double tx = ReikaRandomHelper.getRandomPlusMinus(0, varianceX[i], rand);
+			double ty = ReikaRandomHelper.getRandomPlusMinus(0, varianceY[i], rand);
+			double tz = ReikaRandomHelper.getRandomPlusMinus(0, varianceZ[i], rand);
 			offsets[i][0] = tx;
 			offsets[i][1] = ty;
 			offsets[i][2] = tz;
@@ -84,35 +92,35 @@ public class LightningBolt {
 			double ty = offsetTargets[i][1];
 			double tz = offsetTargets[i][2];
 
-			if (ReikaMathLibrary.approxr(dx, tx, varianceX/8D)) {
-				tx = ReikaRandomHelper.getRandomPlusMinus(0, varianceX, rand);
+			if (ReikaMathLibrary.approxr(dx, tx, varianceX[i]/8D)) {
+				tx = ReikaRandomHelper.getRandomPlusMinus(0, varianceX[i], rand);
 			}
-			if (ReikaMathLibrary.approxr(dy, ty, varianceY/8D)) {
-				ty = ReikaRandomHelper.getRandomPlusMinus(0, varianceY, rand);
+			if (ReikaMathLibrary.approxr(dy, ty, varianceY[i]/8D)) {
+				ty = ReikaRandomHelper.getRandomPlusMinus(0, varianceY[i], rand);
 			}
-			if (ReikaMathLibrary.approxr(dz, tz, varianceZ/8D)) {
-				tz = ReikaRandomHelper.getRandomPlusMinus(0, varianceZ, rand);
+			if (ReikaMathLibrary.approxr(dz, tz, varianceZ[i]/8D)) {
+				tz = ReikaRandomHelper.getRandomPlusMinus(0, varianceZ[i], rand);
 			}
 
 			if (tx > dx) {
-				dx += velocityX;
+				dx += velocityX[i];
 			}
 			else if (tx < dx) {
-				dx -= velocityX;
+				dx -= velocityX[i];
 			}
 
 			if (ty > dy) {
-				dy += velocityY;
+				dy += velocityY[i];
 			}
 			else if (ty < dy) {
-				dy -= velocityY;
+				dy -= velocityY[i];
 			}
 
 			if (tz > dz) {
-				dz += velocityZ;
+				dz += velocityZ[i];
 			}
 			else if (tz < dz) {
-				dz -= velocityZ;
+				dz -= velocityZ[i];
 			}
 
 			offsets[i][0] = dx;
@@ -161,9 +169,30 @@ public class LightningBolt {
 	}
 
 	public LightningBolt setVariance(double vx, double vy, double vz) {
-		varianceX = vx;
-		varianceY = vy;
-		varianceZ = vz;
+		return this.setVariance(vx, vy, vz, null, null, null);
+	}
+
+	public LightningBolt setVariance(double vx, double vy, double vz, Function<Integer, Double> funcX, Function<Integer, Double> funcY, Function<Integer, Double> funcZ) {
+		for (int i = 0; i < varianceX.length; i++) {
+			varianceX[i] = vx;
+			varianceY[i] = vy;
+			varianceZ[i] = vz;
+			if (funcX != null)
+				varianceX[i] *= funcX.apply(i);
+			if (funcY != null)
+				varianceY[i] *= funcY.apply(i);
+			if (funcZ != null)
+				varianceZ[i] *= funcZ.apply(i);
+		}
+		return this;
+	}
+
+	public LightningBolt setVariance(double[] vx, double[] vy, double[] vz) {
+		for (int i = 0; i < varianceX.length; i++) {
+			varianceX[i] = vx[i];
+			varianceY[i] = vy[i];
+			varianceZ[i] = vz[i];
+		}
 		return this;
 	}
 
@@ -172,9 +201,30 @@ public class LightningBolt {
 	}
 
 	public LightningBolt setVelocity(double vx, double vy, double vz) {
-		velocityX = vx;
-		velocityY = vy;
-		velocityZ = vz;
+		return this.setVelocity(vx, vy, vz, null, null, null);
+	}
+
+	public LightningBolt setVelocity(double vx, double vy, double vz, Function<Integer, Double> funcX, Function<Integer, Double> funcY, Function<Integer, Double> funcZ) {
+		for (int i = 0; i < varianceX.length; i++) {
+			velocityX[i] = vx;
+			velocityY[i] = vy;
+			velocityZ[i] = vz;
+			if (funcX != null)
+				velocityX[i] *= funcX.apply(i);
+			if (funcY != null)
+				velocityY[i] *= funcY.apply(i);
+			if (funcZ != null)
+				velocityZ[i] *= funcZ.apply(i);
+		}
+		return this;
+	}
+
+	public LightningBolt setVelocity(double[] vx, double[] vy, double[] vz) {
+		for (int i = 0; i < velocityX.length; i++) {
+			velocityX[i] = vx[i];
+			velocityY[i] = vy[i];
+			velocityZ[i] = vz[i];
+		}
 		return this;
 	}
 
@@ -183,9 +233,11 @@ public class LightningBolt {
 	}
 
 	public LightningBolt scaleVariance(double vx, double vy, double vz) {
-		varianceX *= vx;
-		varianceY *= vy;
-		varianceZ *= vz;
+		for (int i = 0; i < varianceX.length; i++) {
+			varianceX[i] *= vx;
+			varianceY[i] *= vy;
+			varianceZ[i] *= vz;
+		}
 		return this;
 	}
 
@@ -194,9 +246,11 @@ public class LightningBolt {
 	}
 
 	public LightningBolt scaleVelocity(double vx, double vy, double vz) {
-		velocityX *= vx;
-		velocityY *= vy;
-		velocityZ *= vz;
+		for (int i = 0; i < varianceX.length; i++) {
+			velocityX[i] *= vx;
+			velocityY[i] *= vy;
+			velocityZ[i] *= vz;
+		}
 		return this;
 	}
 

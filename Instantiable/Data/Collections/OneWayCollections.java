@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -22,6 +22,14 @@ import java.util.Set;
 public class OneWayCollections {
 
 	public static final class OneWayList<E> extends ArrayList<E> {
+
+		public OneWayList() {
+			super();
+		}
+
+		public OneWayList(Collection<E> c) {
+			super(c);
+		}
 
 		@Override
 		public final E remove(int o) {

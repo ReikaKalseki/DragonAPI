@@ -33,17 +33,20 @@ public class ModVersion implements Comparable<ModVersion> {
 		@Override public boolean verify() {return false;}
 	};
 
-	private static final ModVersion error = new ModVersion(1) {
-		@Override public boolean equals(Object o) {return o == this;}
-		@Override public String toString() {return "[NO FILE]";}
-		@Override public boolean verify() {return false;}
-	};
+	public static final class ErroredVersion extends ModVersion {
 
-	public static final ModVersion timeout = new ModVersion(-1) {
-		@Override public boolean equals(Object o) {return o == this;}
-		@Override public String toString() {return "[URL TIMEOUT]";}
-		@Override public boolean verify() {return false;}
-	};
+		public final String errorMessage;
+
+		public ErroredVersion(Throwable t) {
+			this(t.getMessage());
+		}
+
+		public ErroredVersion(String err) {
+			super(0);
+			errorMessage = err;
+		}
+
+	}
 
 	public final int majorVersion;
 	public final String subVersion;
@@ -88,7 +91,7 @@ public class ModVersion implements Comparable<ModVersion> {
 		if (s.startsWith("$") || s.startsWith("@"))
 			return source;
 		if (s.contains("URL TIMEOUT"))
-			return timeout;
+			return new ErroredVersion("Connection Timeout");
 		if (s.startsWith("v") || s.startsWith("V"))
 			s = s.substring(1);
 		char c = s.charAt(s.length()-1);
@@ -123,18 +126,18 @@ public class ModVersion implements Comparable<ModVersion> {
 		try {
 			InputStream stream = ModVersion.class.getClassLoader().getResourceAsStream(path);
 			if (stream == null) {
-				return ModVersion.error;
+				return new ErroredVersion("Null properties file");
 			}
 			p.load(stream);
 			String mj = p.getProperty("Major");
 			String mn = p.getProperty("Minor");
 			if (mj == null || mn == null || mj.equals("null") || mn.equals("null") || mj.isEmpty() || mn.isEmpty())
-				return ModVersion.error;
+				return new ErroredVersion("Properties missing");
 			return getFromString(mj+mn);
 		}
 		catch (IOException e) {
 			e.printStackTrace();
-			return ModVersion.error;
+			return new ErroredVersion(e);
 		}
 	}
 

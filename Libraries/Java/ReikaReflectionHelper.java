@@ -25,6 +25,7 @@ import com.google.common.base.Throwables;
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.Item;
+import net.minecraftforge.classloading.FMLForgePlugin;
 
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Base.DragonAPIMod;
@@ -493,6 +494,20 @@ public final class ReikaReflectionHelper extends DragonAPICore {
 		}
 		catch (Exception e) {
 			throw Throwables.propagate(e);
+		}
+	}
+
+	public static void makeFieldFinal(Class c, String field, String obf) {
+		String n = FMLForgePlugin.RUNTIME_DEOBF ? obf : field;
+		try {
+			Field f = c.getDeclaredField(n);
+			f.setAccessible(true);
+			Field modifiersField = Field.class.getDeclaredField("modifiers");
+			modifiersField.setAccessible(true);
+			modifiersField.setInt(f, f.getModifiers() | Modifier.FINAL);
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
 		}
 	}
 
