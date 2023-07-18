@@ -55,7 +55,6 @@ import Reika.DragonAPI.Auxiliary.ModularLogger.ModularLoggerCommand;
 import Reika.DragonAPI.Auxiliary.NEI_DragonAPI_Config;
 import Reika.DragonAPI.Auxiliary.ProgressiveRecursiveBreaker;
 import Reika.DragonAPI.Auxiliary.RainTicker;
-import Reika.DragonAPI.Auxiliary.RebootScheduler;
 import Reika.DragonAPI.Auxiliary.VillageTradeHandler;
 import Reika.DragonAPI.Auxiliary.Trackers.ChunkPregenerator;
 import Reika.DragonAPI.Auxiliary.Trackers.CommandableUpdateChecker;
@@ -483,8 +482,6 @@ public class DragonAPIInit extends DragonAPIMod {
 		TickRegistry.instance.registerTickHandler(ChunkPregenerator.instance);
 		if (DragonOptions.RAINTICK.getState())
 			TickRegistry.instance.registerTickHandler(RainTicker.instance);
-		if (DragonOptions.AUTOREBOOT.getValue() > 0)
-			TickRegistry.instance.registerTickHandler(RebootScheduler.instance);
 		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
 			TickRegistry.instance.registerTickHandler(KeyTicker.instance);
 			TickRegistry.instance.registerTickHandler(new ReikaRenderHelper.RenderTick());

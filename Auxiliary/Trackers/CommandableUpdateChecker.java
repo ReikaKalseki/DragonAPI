@@ -284,12 +284,12 @@ public final class CommandableUpdateChecker {
 		}
 	}
 
-	private boolean beAggressive(DragonAPIMod mod, EntityPlayerMP ep) {
+	private boolean beAggressive(DragonAPIMod mod, EntityPlayerMP ep) {/*
 		boolean abandonedPack = latestVersions.get(mod).majorVersion-mod.getModVersion().majorVersion > 1;
 		if (!abandonedPack && DragonOptions.PACKONLYUPDATE.getState()) {
 			return this.isPackMaker(mod, ep);
 		}
-		else if (DragonOptions.OPONLYUPDATE.getState()) {
+		else */if (DragonOptions.OPONLYUPDATE.getState()) {
 			return DragonAPICore.isSinglePlayer() || ReikaPlayerAPI.isAdmin(ep);
 		}
 		return true;
