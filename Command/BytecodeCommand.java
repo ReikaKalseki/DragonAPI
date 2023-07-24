@@ -205,6 +205,51 @@ public class BytecodeCommand extends ReflectiveBasedCommand {
 			}
 			return;
 		}
+		else if (args[0].equalsIgnoreCase("mapsrg")) {
+			if (admin) {
+				try {
+					Class cl = findClass(args[1]);
+					addSRGMapping(cl, args[3], args[2]);
+					this.sendChatToSender(ics, EnumChatFormatting.GREEN+"Loaded SRG mapping "+cl.getName()+"::obf="+args[2]+" >deobf="+args[3]);
+				}
+				catch (ClassNotFoundException e) {
+					this.sendChatToSender(ics, EnumChatFormatting.RED+"Could not parse SRG mapping - class not found.");
+				}
+			}
+			else {
+				this.sendChatToSender(ics, EnumChatFormatting.RED+"You do not have permission to use this command in this way.");
+			}
+			return;
+		}
+		else if (args[0].equalsIgnoreCase("loadsrg")) {
+			if (admin) {
+				int sum = 0;
+				for (String s : ReikaFileReader.getFileAsLines(new File(args[1]), true, Charsets.UTF_8)) {
+					s = s.trim();
+					if (s.isEmpty())
+						continue;
+					try {
+						String[] parts = s.split(" ");
+						int idx = parts[1].lastIndexOf('/');
+						Class cl = Class.forName(parts[1].substring(0, idx).replace('/', '.'));
+						if (s.startsWith("FD")) //eg FD: net/minecraft/world/chunk/Chunk/heightMapMinimum net/minecraft/world/chunk/Chunk/field_82912_p
+							addSRGMapping(cl, parts[1].substring(idx+1), parts[2].substring(idx+1));
+						else if (s.startsWith("MD")) //eg MD: net/minecraft/block/BlockStainedGlass/canSilkHarvest ()Z net/minecraft/block/BlockStainedGlass/func_149700_E ()Z
+							addSRGMapping(cl, parts[1].substring(idx+1), parts[3].substring(idx+1));
+						sum++;
+					}
+					catch (Exception e) {
+						DragonAPICore.logError("Failed to parse SRG line '"+s+"'");
+						e.printStackTrace();
+					}
+				}
+				this.sendChatToSender(ics, EnumChatFormatting.GREEN+"Loaded "+sum+" SRG mappings.");
+			}
+			else {
+				this.sendChatToSender(ics, EnumChatFormatting.RED+"You do not have permission to use this command in this way.");
+			}
+			return;
+		}
 		else if (args[0].equalsIgnoreCase("startProgram")) {
 			if (admin) {
 				EntityPlayerMP ep = this.getCommandSenderAsPlayer(ics);
@@ -598,7 +643,7 @@ public class BytecodeCommand extends ReflectiveBasedCommand {
 		MAKEARRAY(),
 		GETARRAY(),
 		SETARRAY(),
-		DECOMPOSE(),
+		//DECOMPOSE(),
 		CONCAT(),
 		ITERATE(),
 		OUTPUT(),
@@ -676,7 +721,7 @@ public class BytecodeCommand extends ReflectiveBasedCommand {
 					break;
 				}
 				case OBJMETHOD: {
-					Object o = s.peek();
+					Object o = removeTop ? s.pop() : s.peek();
 					Method[] arr = o.getClass().getMethods();
 					Method call = null;
 					for (Method m : arr) {
@@ -705,7 +750,7 @@ public class BytecodeCommand extends ReflectiveBasedCommand {
 					for (int i = vals.length-1; i >= 0; i--) {
 						vals[i] = s.pop();
 					}
-					s.push(call.invoke(removeTop ? s.pop() : s.peek(), vals));
+					s.push(call.invoke(o, vals));
 					break;
 				}
 				case LDC:
@@ -808,19 +853,7 @@ public class BytecodeCommand extends ReflectiveBasedCommand {
 					int idx = (int)s.pop();
 					arr[idx] = s.pop();
 					break;
-				}/*
-				case DECOMPOSE: {
-					String func = (String)s.pop();
-					String cl = (String)s.pop();
-					Class c1 = cmd.findClass(cl);
-					ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-					InputStream in = classLoader.getResourceAsStream(c1.getName()+".class");
-					OutputStream out = new FileOutputStream(new File(DragonAPICore.getMinecraftDirectory(), "HELLO"));
-					ReikaFileReader.copyFile(in, out, 512, null);
-					break;
-				}*/
-				default:
-					break;
+				}
 			}
 		}
 	}

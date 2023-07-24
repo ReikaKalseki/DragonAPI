@@ -16,8 +16,13 @@ import net.minecraft.world.World;
 
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Interfaces.Registry.OreType;
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
+import Reika.DragonAPI.Libraries.Registry.ReikaOreHelper;
 import Reika.DragonAPI.ModInteract.DeepInteract.ReikaThaumHelper;
+import Reika.DragonAPI.ModRegistry.ModOreList;
 
+import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.registry.GameRegistry;
 import thaumcraft.api.IWarpingGear;
 import thaumcraft.api.aspects.Aspect;
@@ -173,6 +178,49 @@ public class ThaumItemHelper {
 		ItemStack is = ItemEntry.WISP.getItem();
 		((IEssentiaContainerItem)is.getItem()).setAspects(is, new AspectList().add(a, 2)); //2, not 1
 		return is;
+	}
+
+	public static ItemStack getNativeCluster(OreType ore) {
+		int meta = -1;
+		if (ore == ReikaOreHelper.IRON) {
+			meta = 16;
+		}
+		else if (ore == ReikaOreHelper.GOLD) {
+			meta = 31;
+		}
+		else if (ore instanceof ModOreList) {
+			switch((ModOreList)ore) {
+				case TIN:
+					meta = 18;
+					break;
+				case COPPER:
+					meta = 17;
+					break;
+				case SILVER:
+					meta = 19;
+					break;
+				case LEAD:
+					meta = 20;
+					break;
+				case CINNABAR:
+					meta = 21;
+					break;
+				default:
+					break;
+			}
+		}
+		if (Loader.isModLoaded("WitchingGadgets")) {
+			if (ore == ModOreList.ALUMINUM) {
+				return ReikaItemHelper.lookupItem("WitchingGadgets:item.WG_Cluster");
+			}
+			else if (ore == ModOreList.NICKEL) {
+				return ReikaItemHelper.lookupItem("WitchingGadgets:item.WG_Cluster:3");
+			}
+			else if (ore == ModOreList.PLATINUM) {
+				return ReikaItemHelper.lookupItem("WitchingGadgets:item.WG_Cluster:7");
+			}
+		}
+		return meta < 0 ? null : new ItemStack(ItemEntry.NUGGETCLUSTER.getItem().getItem(), 1, meta);
 	}
 
 	public static ItemStack getResearchNote(String key, World world, boolean complete) {

@@ -37,13 +37,13 @@ import net.minecraftforge.event.world.WorldEvent;
 import Reika.DragonAPI.Auxiliary.Trackers.TickRegistry.TickHandler;
 import Reika.DragonAPI.Auxiliary.Trackers.TickRegistry.TickType;
 import Reika.DragonAPI.Base.BlockTieredResource;
+import Reika.DragonAPI.Base.BlockTileEnum;
 import Reika.DragonAPI.Instantiable.Data.BlockStruct.BlockArray;
 import Reika.DragonAPI.Instantiable.Data.Collections.RelativePositionList;
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockBox;
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
-import Reika.DragonAPI.Interfaces.Block.MachineRegistryBlock;
 import Reika.DragonAPI.Interfaces.Registry.TreeType;
 import Reika.DragonAPI.Libraries.ReikaInventoryHelper;
 import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
@@ -277,8 +277,8 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 							}
 						}
 					}
-					else if (id instanceof MachineRegistryBlock) {
-						drops.add(((MachineRegistryBlock)id).getMachine(world, x, y, z).getCraftedProduct(world.getTileEntity(x, y, z)));
+					else if (id instanceof BlockTileEnum) {
+						drops.add(((BlockTileEnum)id).getMapping(world, x, y, z).getCraftedProduct(world.getTileEntity(x, y, z)));
 					}
 					else {
 						if (silkTouch && id.canSilkHarvest(world, player, x, y, z, meta)) {

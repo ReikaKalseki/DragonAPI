@@ -9,9 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.Command;
 
-import java.lang.reflect.Array;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -19,57 +16,18 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import net.minecraft.block.Block;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraft.world.gen.ChunkProviderGenerate;
-import net.minecraft.world.gen.ChunkProviderServer;
 import net.minecraftforge.classloading.FMLForgePlugin;
-import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.util.ForgeDirection;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.oredict.OreDictionary;
 
-import Reika.DragonAPI.ModList;
-import Reika.DragonAPI.Libraries.ReikaInventoryHelper;
-import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
-import Reika.DragonAPI.Libraries.Java.ReikaArrayHelper;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-import Reika.DragonAPI.Libraries.Java.ReikaReflectionHelper;
-import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
-import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
-import Reika.DragonAPI.Libraries.MathSci.ReikaPhysicsHelper;
-import Reika.DragonAPI.Libraries.Registry.ReikaCropHelper;
-import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
-import Reika.DragonAPI.Libraries.Registry.ReikaOreHelper;
-import Reika.DragonAPI.Libraries.Registry.ReikaPlantHelper;
-import Reika.DragonAPI.Libraries.Registry.ReikaTreeHelper;
-import Reika.DragonAPI.Libraries.World.ReikaBiomeHelper;
-import Reika.DragonAPI.Libraries.World.ReikaBlockHelper;
-import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
-import Reika.DragonAPI.ModRegistry.ModCropList;
-import Reika.DragonAPI.ModRegistry.ModOreList;
-import Reika.DragonAPI.ModRegistry.ModWoodList;
-
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.registry.GameRegistry;
 
 
 
@@ -82,6 +40,7 @@ public abstract class ReflectiveBasedCommand extends DragonCommandBase {
 	private static final UUID consoleUUID = UUID.randomUUID();
 
 	static {
+		//SRG begin (do not remove, used by Website Gen)
 		addSRGMapping(World.class, "getBlock", "func_147439_a");
 		addSRGMapping(World.class, "getBlockMetadata", "func_72805_g");
 		addSRGMapping(World.class, "getTileEntity", "func_147438_o");
@@ -101,74 +60,79 @@ public abstract class ReflectiveBasedCommand extends DragonCommandBase {
 		addSRGMapping(Entity.class, "posX", "field_70165_t");
 		addSRGMapping(Entity.class, "posY", "field_70163_u");
 		addSRGMapping(Entity.class, "posZ", "field_70161_v");
+		addSRGMapping(BiomeGenBase.class, "biomeID", "field_76756_M");
+		addSRGMapping(BiomeGenBase.class, "theBiomeDecorator", "field_76760_I");
+		//SRG end (do not remove, used by Website Gen)
 
 		packageShortcuts.put("mcforge", "net.minecraftforge");
 		packageShortcuts.put("mcworld", "net.minecraft.world"); //TODO: not fully implemented
 
-		classShortcuts.put("String", String.class);
-		classShortcuts.put("Object", Object.class);
-		classShortcuts.put("Enum", Enum.class);
-		classShortcuts.put("ArrayList", ArrayList.class);
-		classShortcuts.put("HashMap", HashMap.class);
+		//Class Shortcut begin (do not remove, used by Website Gen)
+		classShortcuts.put("String", java.lang.String.class);
+		classShortcuts.put("Object", java.lang.Object.class);
+		classShortcuts.put("Enum", java.lang.Enum.class);
+		classShortcuts.put("ArrayList", java.util.ArrayList.class);
+		classShortcuts.put("HashMap", java.util.HashMap.class);
 
-		classShortcuts.put("Class", Class.class);
-		classShortcuts.put("Field", Field.class);
-		classShortcuts.put("Method", Method.class);
-		classShortcuts.put("Array", Array.class);
+		classShortcuts.put("Class",java.lang. Class.class);
+		classShortcuts.put("Field", java.lang.reflect.Field.class);
+		classShortcuts.put("Method", java.lang.reflect.Method.class);
+		classShortcuts.put("Array", java.lang.reflect.Array.class);
 
-		classShortcuts.put("Arrays", Arrays.class);
-		classShortcuts.put("Math", Math.class);
+		classShortcuts.put("Arrays", java.util.Arrays.class);
+		classShortcuts.put("Math", java.lang.Math.class);
 
-		classShortcuts.put("World", World.class);
-		classShortcuts.put("Entity", Entity.class);
-		classShortcuts.put("EntityLivingBase", EntityLivingBase.class);
-		classShortcuts.put("EntityPlayer", EntityPlayer.class);
-		classShortcuts.put("EntityPlayerMP", EntityPlayerMP.class);
-		classShortcuts.put("TileEntity", TileEntity.class);
-		classShortcuts.put("Block", Block.class);
-		classShortcuts.put("Item", Item.class);
-		classShortcuts.put("Blocks", Blocks.class);
-		classShortcuts.put("Items", Items.class);
-		classShortcuts.put("ItemStack", ItemStack.class);
-		classShortcuts.put("Biome", BiomeGenBase.class);
-		classShortcuts.put("BiomeGenBase", BiomeGenBase.class);
-		classShortcuts.put("Server", MinecraftServer.class);
-		classShortcuts.put("MinecraftServer", MinecraftServer.class);
-		classShortcuts.put("ChunkProviderServer", ChunkProviderServer.class);
-		classShortcuts.put("ChunkProviderGenerate", ChunkProviderGenerate.class);
+		classShortcuts.put("World", net.minecraft.world.World.class);
+		classShortcuts.put("Entity", net.minecraft.entity.Entity.class);
+		classShortcuts.put("EntityLivingBase", net.minecraft.entity.EntityLivingBase.class);
+		classShortcuts.put("EntityPlayer", net.minecraft.entity.player.EntityPlayer.class);
+		classShortcuts.put("EntityPlayerMP", net.minecraft.entity.player.EntityPlayerMP.class);
+		classShortcuts.put("TileEntity", net.minecraft.tileentity.TileEntity.class);
+		classShortcuts.put("Block", net.minecraft.block.Block.class);
+		classShortcuts.put("Item", net.minecraft.item.Item.class);
+		classShortcuts.put("Blocks", net.minecraft.init.Blocks.class);
+		classShortcuts.put("Items", net.minecraft.init.Items.class);
+		classShortcuts.put("ItemStack", net.minecraft.item.ItemStack.class);
+		classShortcuts.put("Biome", net.minecraft.world.biome.BiomeGenBase.class);
+		classShortcuts.put("BiomeGenBase", net.minecraft.world.biome.BiomeGenBase.class);
+		classShortcuts.put("Server", net.minecraft.server.MinecraftServer.class);
+		classShortcuts.put("MinecraftServer", net.minecraft.server.MinecraftServer.class);
+		classShortcuts.put("ChunkProviderServer", net.minecraft.world.gen.ChunkProviderServer.class);
+		classShortcuts.put("ChunkProviderGenerate", net.minecraft.world.gen.ChunkProviderGenerate.class);
 
-		classShortcuts.put("DimensionManager", DimensionManager.class);
-		classShortcuts.put("FML", FMLCommonHandler.class);
-		classShortcuts.put("Forge", MinecraftForge.class);
-		classShortcuts.put("ForgeDirection", ForgeDirection.class);
-		classShortcuts.put("Loader", Loader.class);
-		classShortcuts.put("Fluid", Fluid.class);
-		classShortcuts.put("FluidStack", FluidStack.class);
-		classShortcuts.put("FluidRegistry", FluidRegistry.class);
-		classShortcuts.put("GameRegistry", GameRegistry.class);
-		classShortcuts.put("OreDictionary", OreDictionary.class);
+		classShortcuts.put("DimensionManager", net.minecraftforge.common.DimensionManager.class);
+		classShortcuts.put("FML", cpw.mods.fml.common.FMLCommonHandler.class);
+		classShortcuts.put("Forge", net.minecraftforge.common.MinecraftForge.class);
+		classShortcuts.put("ForgeDirection", net.minecraftforge.common.util.ForgeDirection.class);
+		classShortcuts.put("Loader", cpw.mods.fml.common.Loader.class);
+		classShortcuts.put("Fluid", net.minecraftforge.fluids.Fluid.class);
+		classShortcuts.put("FluidStack", net.minecraftforge.fluids.FluidStack.class);
+		classShortcuts.put("FluidRegistry", net.minecraftforge.fluids.FluidRegistry.class);
+		classShortcuts.put("GameRegistry", cpw.mods.fml.common.registry.GameRegistry.class);
+		classShortcuts.put("OreDictionary", net.minecraftforge.oredict.OreDictionary.class);
 
-		classShortcuts.put("ASMHelper", ReikaASMHelper.class);
-		classShortcuts.put("ReflectionHelper", ReikaReflectionHelper.class);
-		classShortcuts.put("JavaLibrary", ReikaJavaLibrary.class);
-		classShortcuts.put("StringParser", ReikaStringParser.class);
-		classShortcuts.put("ArrayHelper", ReikaArrayHelper.class);
-		classShortcuts.put("MathLibrary", ReikaMathLibrary.class);
-		classShortcuts.put("PhysicsHelper", ReikaPhysicsHelper.class);
-		classShortcuts.put("WorldHelper", ReikaWorldHelper.class);
-		classShortcuts.put("BiomeHelper", ReikaBiomeHelper.class);
-		classShortcuts.put("BlockHelper", ReikaBlockHelper.class);
-		classShortcuts.put("ItemHelper", ReikaItemHelper.class);
-		classShortcuts.put("InventoryHelper", ReikaInventoryHelper.class);
-		classShortcuts.put("PlayerAPI", ReikaPlayerAPI.class);
-		classShortcuts.put("PlantHelper", ReikaPlantHelper.class);
-		classShortcuts.put("CropHelper", ReikaCropHelper.class);
-		classShortcuts.put("OreHelper", ReikaOreHelper.class);
-		classShortcuts.put("TreeHelper", ReikaTreeHelper.class);
-		classShortcuts.put("ModList", ModList.class);
-		classShortcuts.put("ModOreList", ModOreList.class);
-		classShortcuts.put("ModWoodList", ModWoodList.class);
-		classShortcuts.put("ModCropList", ModCropList.class);
+		classShortcuts.put("ASMHelper", Reika.DragonAPI.Libraries.Java.ReikaASMHelper.class);
+		classShortcuts.put("ReflectionHelper", Reika.DragonAPI.Libraries.Java.ReikaReflectionHelper.class);
+		classShortcuts.put("JavaLibrary", Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary.class);
+		classShortcuts.put("StringParser", Reika.DragonAPI.Libraries.Java.ReikaStringParser.class);
+		classShortcuts.put("ArrayHelper", Reika.DragonAPI.Libraries.Java.ReikaArrayHelper.class);
+		classShortcuts.put("MathLibrary", Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary.class);
+		classShortcuts.put("PhysicsHelper", Reika.DragonAPI.Libraries.MathSci.ReikaPhysicsHelper.class);
+		classShortcuts.put("WorldHelper", Reika.DragonAPI.Libraries.World.ReikaWorldHelper.class);
+		classShortcuts.put("BiomeHelper", Reika.DragonAPI.Libraries.World.ReikaBiomeHelper.class);
+		classShortcuts.put("BlockHelper", Reika.DragonAPI.Libraries.World.ReikaBlockHelper.class);
+		classShortcuts.put("ItemHelper", Reika.DragonAPI.Libraries.Registry.ReikaItemHelper.class);
+		classShortcuts.put("InventoryHelper", Reika.DragonAPI.Libraries.ReikaInventoryHelper.class);
+		classShortcuts.put("PlayerAPI", Reika.DragonAPI.Libraries.ReikaPlayerAPI.class);
+		classShortcuts.put("PlantHelper", Reika.DragonAPI.Libraries.Registry.ReikaPlantHelper.class);
+		classShortcuts.put("CropHelper", Reika.DragonAPI.Libraries.Registry.ReikaCropHelper.class);
+		classShortcuts.put("OreHelper", Reika.DragonAPI.Libraries.Registry.ReikaOreHelper.class);
+		classShortcuts.put("TreeHelper", Reika.DragonAPI.Libraries.Registry.ReikaTreeHelper.class);
+		classShortcuts.put("ModList", Reika.DragonAPI.ModList.class);
+		classShortcuts.put("ModOreList", Reika.DragonAPI.ModRegistry.ModOreList.class);
+		classShortcuts.put("ModWoodList", Reika.DragonAPI.ModRegistry.ModWoodList.class);
+		classShortcuts.put("ModCropList", Reika.DragonAPI.ModRegistry.ModCropList.class);
+		//Class Shortcut end (do not remove, used by Website Gen)
 	}
 
 	protected static boolean addClassShortcut(Class c) {
@@ -195,7 +159,7 @@ public abstract class ReflectiveBasedCommand extends DragonCommandBase {
 		return ics instanceof EntityPlayer ? ((EntityPlayer)ics).getUniqueID() : consoleUUID;
 	}
 
-	private static void addSRGMapping(Class c, String deobf, String obf) {
+	protected static void addSRGMapping(Class c, String deobf, String obf) {
 		HashMap<String, String> map = SRGMap.get(c);
 		if (map == null) {
 			map = new HashMap();

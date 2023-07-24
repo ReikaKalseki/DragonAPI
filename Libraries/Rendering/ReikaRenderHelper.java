@@ -41,6 +41,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.MathHelper;
@@ -53,6 +54,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Auxiliary.Trackers.TickRegistry.TickHandler;
 import Reika.DragonAPI.Auxiliary.Trackers.TickRegistry.TickType;
+import Reika.DragonAPI.Base.BlockTileEnum;
 import Reika.DragonAPI.IO.Shaders.ShaderProgram;
 import Reika.DragonAPI.IO.Shaders.ShaderRegistry;
 import Reika.DragonAPI.Instantiable.CubePoints;
@@ -63,6 +65,7 @@ import Reika.DragonAPI.Interfaces.TileModel;
 import Reika.DragonAPI.Interfaces.TileEntity.RenderFetcher;
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaGLHelper.BlendMode;
+import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
 import Reika.DragonAPI.Libraries.World.ReikaBiomeHelper;
 
@@ -1917,6 +1920,16 @@ public final class ReikaRenderHelper extends DragonAPICore {
 
 	public static void rockScreen(int ticks) {
 		Minecraft.getMinecraft().renderViewEntity.hurtTime = Math.max(Minecraft.getMinecraft().renderViewEntity.hurtTime, ticks);
+	}
+
+	public static ItemStack getBlockItem(Block bk, int meta) {
+		return getBlockItem(bk, meta, null);
+	}
+
+	public static ItemStack getBlockItem(Block bk, int meta, TileEntity te) {
+		if (bk instanceof BlockTileEnum)
+			return ((BlockTileEnum)bk).getMapping(meta).getCraftedProduct(te);
+		return (ItemStack)ReikaObfuscationHelper.invoke("createStackedBlock", bk, meta);
 	}
 
 }

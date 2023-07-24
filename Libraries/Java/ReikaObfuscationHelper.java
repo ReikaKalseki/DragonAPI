@@ -181,6 +181,7 @@ public class ReikaObfuscationHelper {
 		addMethod("canSpawnStructureAtCoords", "func_75047_a", false, MapGenStructure.class, int.class, int.class);
 		addMethod("getCoordList", "func_75052_o_", false, MapGenStructure.class);
 		addMethod("tryExtend", "func_150079_i", false, BlockPistonBase.class, World.class, int.class, int.class, int.class, int.class);
+		addMethod("createStackedBlock", "func_149644_j", false, Block.class, int.class);
 		if (isClientSide()) {
 			addMethod("getInputStreamByName", "func_110591_a", false, AbstractResourcePack.class, String.class);
 		}/*
