@@ -9,6 +9,7 @@
  ******************************************************************************/
 package Reika.DragonAPI.IO;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
@@ -264,8 +265,9 @@ public class ReikaFileReader extends DragonAPICore {
 	}
 
 	public static boolean writeLinesToFile(File f, List<String> li, boolean printStackTrace, Charset set) {
-		try(FileOutputStream fs = new FileOutputStream(f)) {
+		try(BufferedOutputStream fs = new BufferedOutputStream(new FileOutputStream(f))) {
 			IOUtils.writeLines(li, System.getProperty("line.separator"), fs, set);
+			fs.flush();
 			return true;
 		}
 		catch (IOException e) {
