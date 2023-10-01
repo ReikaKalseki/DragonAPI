@@ -36,7 +36,7 @@ public class ChunkGenerationEvent extends Patcher {
 			var = ((VarInsnNode)m.instructions.getLast().getPrevious().getPrevious()).var;
 		AbstractInsnNode ain = ReikaASMHelper.getLastInsn(m.instructions, Opcodes.ASTORE, var);
 		InsnList li = new InsnList();
-		li.add(new VarInsnNode(Opcodes.ALOAD, 5));
+		li.add(new VarInsnNode(Opcodes.ALOAD, var));
 		li.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/ChunkGenerationEvent", "fire", "(Lnet/minecraft/world/chunk/Chunk;)V", false));
 		if (CoreModDetection.BUKKIT.isInstalled())
 			m.instructions.insertBefore(ain, li);
