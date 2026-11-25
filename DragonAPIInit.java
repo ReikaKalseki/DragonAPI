@@ -225,7 +225,7 @@ public class DragonAPIInit extends DragonAPIMod {
 
 	@EventHandler
 	public void invalidSignature(FMLFingerprintViolationEvent evt) {
-		if (!ReikaObfuscationHelper.isDeObfEnvironment()) {
+		if (!ReikaObfuscationHelper.isDeObfEnvironment() && false) { //FIXME when restore E: and keystore, re-enable this!!
 			if (!evt.fingerprints.contains(evt.expectedFingerprint.toLowerCase(Locale.ENGLISH).replaceAll(":", ""))) {
 				throw new InvalidBuildException(this, evt.source, "Invalid mod jarsign fingerprint!");
 			}

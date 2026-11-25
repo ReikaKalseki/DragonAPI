@@ -286,7 +286,7 @@ public class ShaderRegistry {
 	}
 
 	public static String parseError(int programID) {
-		return GL20.glGetShaderInfoLog(programID, /*GL20.glGetProgrami(programID, GL20.GL_INFO_LOG_LENGTH)*/524288);
+		return GL20.glGetProgramInfoLog(programID, /*GL20.glGetProgrami(programID, GL20.GL_INFO_LOG_LENGTH)*/524288);
 	}
 
 	public static enum ShaderDomain {

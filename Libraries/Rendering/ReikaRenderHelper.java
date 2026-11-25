@@ -1803,7 +1803,7 @@ public final class ReikaRenderHelper extends DragonAPICore {
 			int status = GL30.glCheckFramebufferStatus(GL30.GL_FRAMEBUFFER);
 			if (System.currentTimeMillis()-msFBError >= 4000) {
 				msFBError = System.currentTimeMillis();
-				DragonAPICore.logError("GL ERROR "+err+": FB #"+(fb != null ? fb.framebufferObject : 0)+" was unrecognized (status="+status+")");
+				DragonAPICore.logError("GL ERROR "+err+": FB #"+(fb != null ? fb.framebufferObject : "null")+" was unrecognized (status="+status+")");
 				if (fb == null) {
 					DragonAPICore.log("This should be impossible! Driver issues?");
 				}
