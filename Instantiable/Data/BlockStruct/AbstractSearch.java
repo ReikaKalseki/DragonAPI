@@ -204,6 +204,10 @@ public abstract class AbstractSearch {
 		private final LinkedList<Coordinate> path;
 
 		private FoundPath(LinkedList<Coordinate> li) {
+			if (li == null) {
+				path = new LinkedList<Coordinate>();
+				return;
+			}
 			path = li;
 		}
 
